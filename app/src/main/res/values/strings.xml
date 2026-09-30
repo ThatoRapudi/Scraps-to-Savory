@@ -30,4 +30,21 @@
     <string name="error_quantity_required">Please enter a quantity</string>
     <string name="error_quantity_invalid">Quantity must be a number greater than 0</string>
     <string name="ingredient_saved">Saved to pantry</string>
+
+    <!-- Navigation menu, shared by the main screens -->
+    <string name="nav_pantry">My Pantry</string>
+    <string name="nav_suggested_recipes">Suggested Recipes</string>
+
+    <!-- Suggested Recipes screen -->
+    <string name="suggested_recipes_title">Suggested Recipes</string>
+    <string name="empty_suggested_recipes_message">No recipes match your pantry yet. Add more ingredients to see suggestions here.</string>
+    <string name="filter_diet_label">Diet</string>
+    <string name="filter_meal_label">Meal</string>
+    <string name="ingredient_count_format">%1$d ingredients needed</string>
+
+    <!-- Recipe Detail screen -->
+    <string name="recipe_detail_title">Recipe</string>
+    <string name="recipe_not_found">This recipe could not be found</string>
+    <string name="recipe_ingredients_heading">Ingredients</string>
+    <string name="recipe_method_heading">Method</string>
 </resources>

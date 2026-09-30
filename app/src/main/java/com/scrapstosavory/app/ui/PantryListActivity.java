@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +32,7 @@ import java.util.List;
  * shows the latest data, and so the pantry still shows correctly after
  * closing and reopening the app.
  */
-public class PantryListActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
+public class PantryListActivity extends BaseNavigationActivity implements PantryAdapter.OnPantryItemListener {
 
     private PantryDao pantryDao;
     private PantryAdapter adapter;

@@ -46,6 +46,7 @@ public class PantryListActivity extends BaseNavigationActivity implements Pantry
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setUpBottomNavigation(R.id.action_pantry);
 
         pantryDao = new PantryDao(new DatabaseHelper(this));
 

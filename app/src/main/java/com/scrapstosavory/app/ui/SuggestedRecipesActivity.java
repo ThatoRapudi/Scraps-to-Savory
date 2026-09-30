@@ -58,6 +58,7 @@ public class SuggestedRecipesActivity extends BaseNavigationActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setUpBottomNavigation(R.id.action_suggested_recipes);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         pantryDao = new PantryDao(databaseHelper);

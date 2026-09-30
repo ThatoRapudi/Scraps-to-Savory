@@ -35,6 +35,7 @@ public class SettingsActivity extends BaseNavigationActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.settings_title);
         setSupportActionBar(toolbar);
+        setUpBottomNavigation(R.id.action_settings);
 
         switchExpiringSoonAlerts = findViewById(R.id.switchExpiringSoonAlerts);
         layoutExpiringDays = findViewById(R.id.layoutExpiringDays);

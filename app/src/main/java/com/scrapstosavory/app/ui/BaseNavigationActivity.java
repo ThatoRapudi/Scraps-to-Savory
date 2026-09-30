@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.scrapstosavory.app.R;
 
 /**
- * Shared base class for the app's main screens (Pantry List and Suggested
- * Recipes so far, Settings once it exists). It adds a toolbar menu so the
- * user can jump between these screens from anywhere, instead of only being
- * able to go back the way they came.
+ * Shared base class for the app's main screens (Pantry List, Suggested
+ * Recipes and Settings). It adds a toolbar menu so the user can jump
+ * between these screens from anywhere, instead of only being able to go
+ * back the way they came.
  *
  * Screens reached by drilling into something, such as Add/Edit Ingredient
  * or Recipe Detail, do not extend this class. They use a normal back
@@ -36,6 +36,10 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         }
         if (id == R.id.action_suggested_recipes) {
             openScreen(SuggestedRecipesActivity.class);
+            return true;
+        }
+        if (id == R.id.action_settings) {
+            openScreen(SettingsActivity.class);
             return true;
         }
 

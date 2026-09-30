@@ -40,6 +40,43 @@ public final class DateUtils {
         return format(calendar);
     }
 
+    /**
+     * Adds a number of days to a stored ISO date and returns the result,
+     * also as "yyyy-MM-dd". Used to estimate an expiry date from
+     * dateAdded plus a category's default shelf life, when the user has
+     * not typed in their own expiry date.
+     */
+    public static String addDays(String isoDate, int daysToAdd) {
+        Calendar calendar = parseIso(isoDate);
+        calendar.add(Calendar.DAY_OF_MONTH, daysToAdd);
+        return format(calendar);
+    }
+
+    /**
+     * How many days from today until the given ISO date. Zero means it
+     * is today, a negative number means the date has already passed.
+     * Used to decide whether something counts as "expiring soon".
+     */
+    public static long daysUntil(String isoDate) {
+        Calendar target = parseIso(isoDate);
+        Calendar today = Calendar.getInstance();
+
+        // Both are cleared down to midnight first, so this counts whole
+        // calendar days rather than being thrown off by the time of day.
+        clearTimeOfDay(target);
+        clearTimeOfDay(today);
+
+        long millisPerDay = 24L * 60 * 60 * 1000;
+        return (target.getTimeInMillis() - today.getTimeInMillis()) / millisPerDay;
+    }
+
+    private static void clearTimeOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
     /** Splits a stored "yyyy-MM-dd" string back into a Calendar, e.g. to pre-fill the DatePickerDialog when editing. */
     public static Calendar parseIso(String isoDate) {
         Calendar calendar = Calendar.getInstance();

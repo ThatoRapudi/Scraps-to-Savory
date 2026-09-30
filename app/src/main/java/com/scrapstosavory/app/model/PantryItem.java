@@ -1,5 +1,7 @@
 package com.scrapstosavory.app.model;
 
+import com.scrapstosavory.app.util.DateUtils;
+
 /**
  * Represents a single ingredient the user currently has at home.
  * Mirrors one row of the pantry_items table.
@@ -100,6 +102,20 @@ public class PantryItem {
      */
     public boolean hasManualExpiryDate() {
         return hasExpiryDate();
+    }
+
+    /**
+     * The date this item should be treated as expiring on, for working
+     * out "expiring soon" warnings. If the user typed in their own
+     * expiry date, that is used as is. Otherwise this guesses one by
+     * adding the category's default shelf life onto the day the item
+     * was added to the pantry.
+     */
+    public String getEffectiveExpiryDate() {
+        if (hasManualExpiryDate()) {
+            return expiryDate;
+        }
+        return DateUtils.addDays(dateAdded, category.getDefaultShelfLifeDays());
     }
 
     @Override

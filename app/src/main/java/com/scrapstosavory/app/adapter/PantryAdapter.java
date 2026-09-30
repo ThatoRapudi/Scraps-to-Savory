@@ -1,5 +1,6 @@
 package com.scrapstosavory.app.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,20 +8,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.scrapstosavory.app.R;
 import com.scrapstosavory.app.model.PantryItem;
 import com.scrapstosavory.app.util.DateUtils;
 import com.scrapstosavory.app.util.QuantityUtils;
+import com.scrapstosavory.app.util.SettingsManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Fills the RecyclerView on the Pantry List screen with pantry items.
- * Each row shows the ingredient's name, quantity/unit and category, plus
- * its expiry date if one was set, along with edit and delete buttons.
+ * Each row shows the ingredient's name, quantity/unit and category,
+ * along with edit and delete buttons.
+ *
+ * The expiry line always shows something, either the date the user
+ * typed in themselves, or one estimated from the category's default
+ * shelf life. If the Settings screen has expiring soon alerts turned
+ * on, that line is coloured as a warning once the item is within the
+ * saved number of days of its expiry.
  */
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
 
@@ -60,13 +69,18 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         holder.textItemQuantity.setText(String.format("%s %s • %s",
                 QuantityUtils.format(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));
 
-        if (item.hasExpiryDate()) {
-            holder.textItemExpiry.setVisibility(View.VISIBLE);
-            holder.textItemExpiry.setText(holder.textItemExpiry.getContext()
-                    .getString(R.string.expires_on_format, DateUtils.toDisplay(item.getExpiryDate())));
-        } else {
-            holder.textItemExpiry.setVisibility(View.GONE);
-        }
+        Context context = holder.textItemExpiry.getContext();
+        String effectiveExpiryDate = item.getEffectiveExpiryDate();
+        int labelRes = item.hasManualExpiryDate() ? R.string.expires_on_format : R.string.expires_estimated_format;
+
+        holder.textItemExpiry.setVisibility(View.VISIBLE);
+        holder.textItemExpiry.setText(context.getString(labelRes, DateUtils.toDisplay(effectiveExpiryDate)));
+
+        boolean alertsEnabled = SettingsManager.isExpiringSoonAlertsEnabled(context);
+        boolean isExpiringSoon = alertsEnabled
+                && DateUtils.daysUntil(effectiveExpiryDate) <= SettingsManager.getExpiringSoonDays(context);
+        int colorRes = isExpiringSoon ? R.color.pantry_error : R.color.pantry_text_secondary;
+        holder.textItemExpiry.setTextColor(ContextCompat.getColor(context, colorRes));
 
         holder.buttonEdit.setOnClickListener(v -> listener.onEditClicked(item));
         holder.buttonDelete.setOnClickListener(v -> listener.onDeleteClicked(item));

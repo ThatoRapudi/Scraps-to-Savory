@@ -13,6 +13,7 @@
     <string name="delete">Delete</string>
     <string name="item_deleted">Removed from pantry</string>
     <string name="expires_on_format">Expires %1$s</string>
+    <string name="expires_estimated_format">Estimated expiry %1$s</string>
 
     <!-- Add/Edit Ingredient screen -->
     <string name="add_ingredient_title">Add Ingredient</string>
@@ -34,6 +35,7 @@
     <!-- Navigation menu, shared by the main screens -->
     <string name="nav_pantry">My Pantry</string>
     <string name="nav_suggested_recipes">Suggested Recipes</string>
+    <string name="nav_settings">Settings</string>
 
     <!-- Suggested Recipes screen -->
     <string name="suggested_recipes_title">Suggested Recipes</string>
@@ -47,4 +49,12 @@
     <string name="recipe_not_found">This recipe could not be found</string>
     <string name="recipe_ingredients_heading">Ingredients</string>
     <string name="recipe_method_heading">Method</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_expiring_alerts_switch">Warn me about ingredients expiring soon</string>
+    <string name="settings_expiring_days_hint">Days before expiry to warn me</string>
+    <string name="settings_expiring_days_note">Applies to expiry dates you set yourself and to ones estimated from an ingredient\'s category.</string>
+    <string name="error_days_invalid">Enter a number of days that is 0 or more</string>
+    <string name="settings_saved">Settings saved</string>
 </resources>

@@ -6,14 +6,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Single SQLiteOpenHelper for the whole app. Owns three tables:
+ * This class sets up and manages the app's SQLite database. It creates
+ * three tables:
  *
- *   pantry_items       - what the user currently has at home (fully editable, CRUD)
- *   recipes             - the seeded recipe collection (name, steps, diet tags, meal type)
- *   recipe_ingredients  - one row per ingredient a recipe needs, FK'd to recipes.id
+ *   pantry_items       - everything the user currently has at home
+ *   recipes             - the list of recipes (name, steps, diet tags, meal type)
+ *   recipe_ingredients  - one row per ingredient a recipe needs, linked to a recipe by id
  *
- * Recipes are seeded once in onCreate() so the database self-populates on first run,
- * per the assignment brief (Section 2.2).
+ * The recipes are loaded once, the first time the app runs, inside
+ * onCreate() below, so the app already has recipes to suggest without
+ * the user having to add anything themselves.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -81,7 +83,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Coursework-scale app: simplest safe upgrade path is drop & recreate.
+        // Simplest way to handle a database upgrade for a small app like this:
+        // delete the old tables and create them again from scratch.
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPE_INGREDIENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PANTRY_ITEMS);

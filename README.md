@@ -2,7 +2,7 @@
 
 An Android app (Java) that helps a user reduce food waste by tracking the ingredients they actually have at home — their "pantry" — and suggesting recipes they can cook using strictly those ingredients, no shopping trip required. Built for Mobile App Development 700.
 
-Recipes only appear as "suggested" if every single required ingredient is already in the pantry, in at least the required quantity. This is the app's core piece of business logic (see `StrictMatcher` once Step 5 lands).
+Recipes only appear as "suggested" if every single required ingredient is already in the pantry, in at least the required quantity. This is the app's core piece of logic, and will live in a class called `StrictMatcher`.
 
 ## Database choice: SQLite
 
@@ -17,9 +17,10 @@ Work in progress, built incrementally — see commit history. Currently implemen
 - Project scaffold (Gradle, manifest, resources, theme)
 - Data models (`PantryItem`, `Recipe`, `RecipeIngredient`, plus `PantryCategory`, `DietTag`, `MealType`)
 - `DatabaseHelper` with the full schema and 27 seeded South African home-cooking / quick-meal recipes
-- Pantry List screen (Read) with a RecyclerView bound to the database
+- Pantry List screen with a RecyclerView bound to the database (add, edit and delete all working)
+- Add/Edit Ingredient form with input validation
 
-Still to come: full Add/Edit Ingredient form with validation, the strict-matching algorithm, Suggested Recipes screen, Recipe Detail screen, and Settings screen.
+Still to come: the strict-matching algorithm, Suggested Recipes screen, Recipe Detail screen, and Settings screen.
 
 ## Setup / run instructions
 

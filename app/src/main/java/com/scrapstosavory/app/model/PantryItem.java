@@ -10,9 +10,9 @@ public class PantryItem {
     private String name;
     private double quantity;
     private String unit;
-    private String expiryDate;  // ISO format "yyyy-MM-dd", nullable — user can type an exact date
-    private String dateAdded;   // ISO format "yyyy-MM-dd" — when the item was added to the pantry
-    private PantryCategory category = PantryCategory.OTHER; // drives the auto-estimated shelf life
+    private String expiryDate;  // stored as yyyy-MM-dd, can be left empty if there is no expiry date
+    private String dateAdded;   // stored as yyyy-MM-dd, the day this item was added to the pantry
+    private PantryCategory category = PantryCategory.OTHER; // used to guess a shelf life if no expiry date is given
 
     public PantryItem() {
     }
@@ -28,7 +28,7 @@ public class PantryItem {
         this.category = category != null ? category : PantryCategory.OTHER;
     }
 
-    // Convenience constructor for inserting a new item (no id yet — SQLite assigns it)
+    // used when adding a brand new item, since it does not have an id yet (the database gives it one)
     public PantryItem(String name, double quantity, String unit, String expiryDate,
                        String dateAdded, PantryCategory category) {
         this(-1, name, quantity, unit, expiryDate, dateAdded, category);
@@ -95,10 +95,8 @@ public class PantryItem {
     }
 
     /**
-     * The date used for "expiring soon" checks: the user's own expiry date if
-     * they typed one, otherwise dateAdded + the category's default shelf life.
-     * Actual date arithmetic lives in ExpiryUtils (added with the Settings
-     * screen) so this class stays a plain data holder.
+     * Same check as hasExpiryDate(), just named to make it clear this is a
+     * date the user actually typed in themselves, not an estimated one.
      */
     public boolean hasManualExpiryDate() {
         return hasExpiryDate();

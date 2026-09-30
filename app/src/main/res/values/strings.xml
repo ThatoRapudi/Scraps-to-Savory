@@ -14,10 +14,20 @@
     <string name="item_deleted">Removed from pantry</string>
     <string name="expires_on_format">Expires %1$s</string>
 
-    <!-- Add/Edit Ingredient screen (placeholder scaffold — full form arrives next step) -->
+    <!-- Add/Edit Ingredient screen -->
     <string name="add_ingredient_title">Add Ingredient</string>
     <string name="edit_ingredient_title">Edit Ingredient</string>
     <string name="ingredient_name_hint">Ingredient name</string>
+    <string name="ingredient_quantity_hint">Quantity</string>
+    <string name="ingredient_unit_hint">Unit</string>
+    <string name="ingredient_category_hint">Category</string>
+    <string name="ingredient_expiry_hint">Expiry date (optional)</string>
+    <string name="ingredient_expiry_not_set">Tap to set an expiry date</string>
+    <string name="expiry_optional_note">If you leave this blank, \"expiring soon\" alerts will estimate a shelf life from the category instead.</string>
+    <string name="clear">Clear</string>
     <string name="save">Save</string>
-    <string name="add_edit_placeholder_notice">Full add/edit form with validation is being built in the next step.</string>
+    <string name="error_name_required">Please enter an ingredient name</string>
+    <string name="error_quantity_required">Please enter a quantity</string>
+    <string name="error_quantity_invalid">Quantity must be a number greater than 0</string>
+    <string name="ingredient_saved">Saved to pantry</string>
 </resources>

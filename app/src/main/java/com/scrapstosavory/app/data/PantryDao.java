@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data-access layer for pantry_items. Every screen that touches the user's
- * pantry (Pantry List, Add/Edit, and the strict-matching logic on Suggested
- * Recipes) goes through this class rather than talking to SQLite directly.
+ * Handles all the database work for pantry_items (adding, reading,
+ * updating and deleting). Any screen that needs to touch the pantry goes
+ * through this class instead of writing its own SQLite code.
  */
 public class PantryDao {
 

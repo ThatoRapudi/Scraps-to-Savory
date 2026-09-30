@@ -23,15 +23,15 @@ import com.scrapstosavory.app.model.PantryItem;
 import java.util.List;
 
 /**
- * Launcher screen: the "Read" half of pantry CRUD. Shows every ingredient
- * currently in the pantry via a RecyclerView bound to PantryDao, and hands
- * off to AddEditIngredientActivity (via Intent) for Create/Update, per the
- * assignment's Intents requirement (Section 3.1).
+ * This is the first screen the app opens on. It shows every ingredient
+ * currently in the pantry, using a RecyclerView connected to PantryDao,
+ * and opens AddEditIngredientActivity (using an Intent) when the user
+ * wants to add or edit an item.
  *
- * The list is reloaded in onResume() rather than onCreate() so that coming
- * back from adding, editing, or deleting an ingredient always shows fresh
- * data — this is also what makes the "data survives close/reopen" proof in
- * the video demo (Section 5.1.2) work correctly.
+ * The list is reloaded in onResume() instead of onCreate() so that
+ * coming back from adding, editing, or deleting an ingredient always
+ * shows the latest data, and so the pantry still shows correctly after
+ * closing and reopening the app.
  */
 public class PantryListActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
 

@@ -11,18 +11,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.scrapstosavory.app.R;
 import com.scrapstosavory.app.model.PantryItem;
+import com.scrapstosavory.app.util.DateUtils;
+import com.scrapstosavory.app.util.QuantityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Binds the pantry_items table to the RecyclerView on the Pantry List screen.
- * Each row shows the ingredient's name, quantity/unit + category, and its
- * expiry date if one was set, plus edit/delete actions.
+ * Fills the RecyclerView on the Pantry List screen with pantry items.
+ * Each row shows the ingredient's name, quantity/unit and category, plus
+ * its expiry date if one was set, along with edit and delete buttons.
  */
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
 
-    /** Lets the hosting Activity react to row-level actions without the adapter knowing about Intents or dialogs. */
+    /** Used to tell PantryListActivity when the user taps edit or delete on a row. */
     public interface OnPantryItemListener {
         void onEditClicked(PantryItem item);
         void onDeleteClicked(PantryItem item);
@@ -35,7 +37,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         this.listener = listener;
     }
 
-    /** Replaces the whole data set — called after every DB read (initial load, add, edit, delete). */
+    /** Replaces the whole list of items shown — called every time the pantry is read from the database. */
     public void setItems(List<PantryItem> newItems) {
         items.clear();
         items.addAll(newItems);
@@ -56,12 +58,12 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
         holder.textItemName.setText(item.getName());
         holder.textItemQuantity.setText(String.format("%s %s • %s",
-                formatQuantity(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));
+                QuantityUtils.format(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));
 
         if (item.hasExpiryDate()) {
             holder.textItemExpiry.setVisibility(View.VISIBLE);
             holder.textItemExpiry.setText(holder.textItemExpiry.getContext()
-                    .getString(R.string.expires_on_format, item.getExpiryDate()));
+                    .getString(R.string.expires_on_format, DateUtils.toDisplay(item.getExpiryDate())));
         } else {
             holder.textItemExpiry.setVisibility(View.GONE);
         }
@@ -73,14 +75,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    /** Strips a trailing ".0" so whole numbers ("3 pcs") don't show as "3.0 pcs". */
-    private String formatQuantity(double quantity) {
-        if (quantity == Math.floor(quantity) && !Double.isInfinite(quantity)) {
-            return String.valueOf((long) quantity);
-        }
-        return String.valueOf(quantity);
     }
 
     static class PantryViewHolder extends RecyclerView.ViewHolder {

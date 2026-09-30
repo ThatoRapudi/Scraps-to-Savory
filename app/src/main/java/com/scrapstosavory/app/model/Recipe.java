@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A recipe: a name, its required ingredients, preparation steps, and the
- * dietary tags it carries (a recipe can be more than one — e.g. VEGAN and
- * HIGH_PROTEIN at the same time). The ingredient list is populated
- * separately (via RecipeDao) after the base recipe row is read, since
- * ingredients live in their own table.
+ * One recipe: its name, the ingredients it needs, the steps to make it,
+ * and any diet or meal-time tags (a recipe can have more than one tag,
+ * for example a lentil stew can be both vegan and high-protein at once).
+ * The ingredient list gets filled in after the recipe itself is loaded,
+ * since ingredients are kept in their own table.
  */
 public class Recipe {
 

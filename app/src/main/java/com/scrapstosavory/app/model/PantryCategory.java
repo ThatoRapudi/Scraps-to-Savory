@@ -1,14 +1,13 @@
 package com.scrapstosavory.app.model;
 
 /**
- * Broad category a pantry item falls into. Used to estimate a sensible
- * expiry date automatically (dateAdded + shelfLifeDays) when the user
- * doesn't type an exact expiry date themselves — feeds the "expiring
- * soon" alert toggle on the Settings screen.
+ * The general type of food a pantry item is. This is used to guess how
+ * long an item should last (dateAdded + defaultShelfLifeDays) when the
+ * user does not type in their own expiry date.
  *
- * These day counts are starting defaults and can be tuned later; they are
- * intentionally simple (no NLP / no external food database) per the
- * assignment's scope.
+ * The day counts below are just simple starting guesses and can be
+ * changed. There is no real food database behind this, just a rough
+ * estimate for each category.
  */
 public enum PantryCategory {
 

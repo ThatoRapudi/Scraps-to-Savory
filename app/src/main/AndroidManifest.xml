@@ -7,10 +7,7 @@
         android:theme="@style/Theme.ScrapsToSavory"
         android:usesCleartextTraffic="false">
 
-        <!-- Activities are added here one at a time as we build each screen
-             (Pantry List, Add/Edit Ingredient, Suggested Recipes, Recipe Detail, Settings).
-             Keeping this file growing step-by-step, rather than all at once,
-             mirrors genuine incremental development for the Git history requirement. -->
+        <!-- Every screen in the app needs to be listed here, or Android will not know it exists. -->
 
         <activity
             android:name=".ui.PantryListActivity"

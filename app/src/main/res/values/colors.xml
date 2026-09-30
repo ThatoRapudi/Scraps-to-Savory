@@ -1,0 +1,18 @@
+<resources>
+    <!-- Warm earthy South African kitchen palette -->
+    <color name="pantry_primary">#C1621B</color>
+    <color name="pantry_primary_dark">#8F4712</color>
+    <color name="pantry_accent">#5C6B2C</color>
+    <color name="pantry_background">#FBF4E9</color>
+    <color name="pantry_surface">#FFFFFF</color>
+    <color name="pantry_text_primary">#3A2C1F</color>
+    <color name="pantry_text_secondary">#8A7A68</color>
+    <color name="pantry_error">#B3261E</color>
+    <color name="pantry_success">#5C6B2C</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Diet tag chip colours -->
+    <color name="tag_vegetarian">#5C6B2C</color>
+    <color name="tag_vegan">#2E7D32</color>
+    <color name="tag_high_protein">#8F4712</color>
+</resources>

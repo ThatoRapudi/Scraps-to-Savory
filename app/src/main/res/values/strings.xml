@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Scraps to Savory</string>
+
+    <!-- Pantry List screen -->
+    <string name="pantry_list_title">My Pantry</string>
+    <string name="empty_pantry_message">Your pantry is empty. Tap + to add your first ingredient.</string>
+    <string name="add_item">Add ingredient</string>
+    <string name="edit_item">Edit ingredient</string>
+    <string name="delete_item">Delete ingredient</string>
+    <string name="delete_confirm_title">Remove ingredient?</string>
+    <string name="delete_confirm_message">Remove \"%1$s\" from your pantry?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="item_deleted">Removed from pantry</string>
+    <string name="expires_on_format">Expires %1$s</string>
+
+    <!-- Add/Edit Ingredient screen (placeholder scaffold — full form arrives next step) -->
+    <string name="add_ingredient_title">Add Ingredient</string>
+    <string name="edit_ingredient_title">Edit Ingredient</string>
+    <string name="ingredient_name_hint">Ingredient name</string>
+    <string name="save">Save</string>
+    <string name="add_edit_placeholder_notice">Full add/edit form with validation is being built in the next step.</string>
+</resources>

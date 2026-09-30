@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/pantry_surface">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/textItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/buttonEdit"
+            android:textColor="@color/pantry_text_primary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:ignore="RelativeOverlap"
+            tools:text="Tomato" />
+
+        <TextView
+            android:id="@+id/textItemQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textItemName"
+            android:layout_toStartOf="@id/buttonEdit"
+            android:textColor="@color/pantry_text_secondary"
+            android:textSize="14sp"
+            tools:text="3 pcs • Fresh Produce" />
+
+        <TextView
+            android:id="@+id/textItemExpiry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textItemQuantity"
+            android:layout_toStartOf="@id/buttonEdit"
+            android:textColor="@color/pantry_error"
+            android:textSize="13sp"
+            tools:text="Expires 2026-10-02" />
+
+        <ImageButton
+            android:id="@+id/buttonDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/delete_item"
+            android:src="@drawable/ic_delete" />
+
+        <ImageButton
+            android:id="@+id/buttonEdit"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/buttonDelete"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/edit_item"
+            android:src="@drawable/ic_edit" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

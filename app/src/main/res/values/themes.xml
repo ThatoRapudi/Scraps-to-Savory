@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.ScrapsToSavory" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/pantry_primary</item>
+        <item name="colorPrimaryDark">@color/pantry_primary_dark</item>
+        <item name="colorAccent">@color/pantry_accent</item>
+        <item name="android:windowBackground">@color/pantry_background</item>
+    </style>
+</resources>

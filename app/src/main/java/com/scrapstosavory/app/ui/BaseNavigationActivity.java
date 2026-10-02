@@ -57,6 +57,10 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
                 startActivity(new Intent(this, PantryListActivity.class));
                 return true;
             }
+            if (id == R.id.action_add_ingredients) {
+                startActivity(new Intent(this, AddIngredientsActivity.class));
+                return true;
+            }
             if (id == R.id.action_suggested_recipes) {
                 startActivity(new Intent(this, SuggestedRecipesActivity.class));
                 return true;

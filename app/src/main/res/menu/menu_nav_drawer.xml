@@ -7,6 +7,11 @@
         android:title="@string/nav_pantry" />
 
     <item
+        android:id="@+id/action_add_ingredients"
+        android:icon="@drawable/ic_nav_add_ingredients"
+        android:title="@string/add_ingredients_title" />
+
+    <item
         android:id="@+id/action_suggested_recipes"
         android:icon="@drawable/ic_nav_recipes"
         android:title="@string/nav_suggested_recipes" />

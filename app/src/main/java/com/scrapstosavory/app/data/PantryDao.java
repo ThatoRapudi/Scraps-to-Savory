@@ -31,14 +31,27 @@ public class PantryDao {
         return id;
     }
 
-    /** Read (all). Ordered by name so the list is predictable and easy to scan. */
+    /**
+     * Read (all). Grouped by category in a fixed, sensible order (meat
+     * and poultry first, then vegetables, spices and seasonings, dairy
+     * and eggs, grains and starches, with anything else last), and
+     * alphabetical by name within each group, so the list is easy to
+     * scan rather than just a flat alphabetical jumble.
+     */
     public List<PantryItem> getAll() {
         List<PantryItem> items = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        String categoryOrder = "CASE " + DatabaseHelper.COL_PANTRY_CATEGORY
+                + " WHEN 'MEAT_AND_POULTRY' THEN 0"
+                + " WHEN 'VEGETABLES' THEN 1"
+                + " WHEN 'SPICES_AND_SEASONINGS' THEN 2"
+                + " WHEN 'DAIRY_AND_EGGS' THEN 3"
+                + " WHEN 'GRAINS_AND_STARCHES' THEN 4"
+                + " ELSE 5 END";
         Cursor cursor = db.query(
                 DatabaseHelper.TABLE_PANTRY_ITEMS,
                 null, null, null, null, null,
-                DatabaseHelper.COL_PANTRY_NAME + " ASC");
+                categoryOrder + ", " + DatabaseHelper.COL_PANTRY_NAME + " ASC");
 
         while (cursor.moveToNext()) {
             items.add(fromCursor(cursor));

@@ -73,6 +73,78 @@
                 android:textColor="@color/pantry_text_primary"
                 android:textSize="15sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/pantry_text_secondary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/recipe_feedback_heading"
+                android:textColor="@color/pantry_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/buttonThumbsUp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_feedback_unselected"
+                    android:clickable="true"
+                    android:contentDescription="@string/thumbs_up_description"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="@string/thumbs_up_emoji"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/buttonThumbsDown"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_feedback_unselected"
+                    android:clickable="true"
+                    android:contentDescription="@string/thumbs_down_description"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="@string/thumbs_down_emoji"
+                    android:textSize="22sp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editRecipeNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/recipe_feedback_note_hint"
+                    android:inputType="textMultiLine"
+                    android:minLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/buttonSaveFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/pantry_primary"
+                android:text="@string/recipe_feedback_save"
+                android:textColor="@color/white" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

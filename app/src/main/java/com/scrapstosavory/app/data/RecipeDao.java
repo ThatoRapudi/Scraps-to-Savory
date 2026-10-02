@@ -1,5 +1,6 @@
 package com.scrapstosavory.app.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -61,6 +62,25 @@ public class RecipeDao {
         return recipe;
     }
 
+    /**
+     * Saves the user's thumbs up/down rating and optional note for a
+     * recipe. liked can be true, false, or null to clear a rating the
+     * user already gave (tapping the same thumb again).
+     */
+    public void updateFeedback(long recipeId, Boolean liked, String note) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        if (liked == null) {
+            values.putNull(DatabaseHelper.COL_RECIPE_LIKED);
+        } else {
+            values.put(DatabaseHelper.COL_RECIPE_LIKED, liked ? 1 : 0);
+        }
+        values.put(DatabaseHelper.COL_RECIPE_NOTE, note);
+        db.update(DatabaseHelper.TABLE_RECIPES, values,
+                DatabaseHelper.COL_RECIPE_ID + " = ?", new String[]{String.valueOf(recipeId)});
+        db.close();
+    }
+
     private List<RecipeIngredient> getIngredientsForRecipe(SQLiteDatabase db, long recipeId) {
         List<RecipeIngredient> ingredients = new ArrayList<>();
         Cursor cursor = db.query(DatabaseHelper.TABLE_RECIPE_INGREDIENTS, null,
@@ -85,9 +105,15 @@ public class RecipeDao {
         String dietTagsCsv = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_RECIPE_DIET_TAGS));
         String mealTypesCsv = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_RECIPE_MEAL_TYPES));
 
+        int likedColumnIndex = cursor.getColumnIndexOrThrow(DatabaseHelper.COL_RECIPE_LIKED);
+        Boolean liked = cursor.isNull(likedColumnIndex) ? null : cursor.getInt(likedColumnIndex) != 0;
+        String note = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_RECIPE_NOTE));
+
         Recipe recipe = new Recipe(id, name, steps);
         recipe.setDietTags(parseDietTags(dietTagsCsv));
         recipe.setMealTypes(parseMealTypes(mealTypesCsv));
+        recipe.setLiked(liked);
+        recipe.setNote(note);
         return recipe;
     }
 

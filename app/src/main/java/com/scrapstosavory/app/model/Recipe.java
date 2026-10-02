@@ -20,6 +20,8 @@ public class Recipe {
     private List<RecipeIngredient> ingredients = new ArrayList<>();
     private Set<DietTag> dietTags = EnumSet.noneOf(DietTag.class);
     private Set<MealType> mealTypes = EnumSet.noneOf(MealType.class);
+    private Boolean liked; // true = thumbs up, false = thumbs down, null = not rated yet
+    private String note;   // optional free text the user left about this recipe
 
     public Recipe() {
     }
@@ -107,6 +109,22 @@ public class Recipe {
 
     public boolean hasMealType(MealType mealType) {
         return mealTypes.contains(mealType);
+    }
+
+    public Boolean getLiked() {
+        return liked;
+    }
+
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     @Override

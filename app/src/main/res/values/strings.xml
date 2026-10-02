@@ -36,6 +36,8 @@
     <string name="nav_pantry">My Pantry</string>
     <string name="nav_suggested_recipes">Suggested Recipes</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_drawer_open">Open navigation menu</string>
+    <string name="nav_drawer_close">Close navigation menu</string>
 
     <!-- Suggested Recipes screen -->
     <string name="suggested_recipes_title">Suggested Recipes</string>

@@ -1,11 +1,15 @@
 package com.scrapstosavory.app.ui;
 
 import android.app.DatePickerDialog;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,11 +17,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.scrapstosavory.app.R;
-import com.scrapstosavory.app.adapter.GroupedSpinnerAdapter;
 import com.scrapstosavory.app.data.DatabaseHelper;
 import com.scrapstosavory.app.data.IngredientNameCatalog;
 import com.scrapstosavory.app.data.PantryDao;
@@ -28,6 +32,7 @@ import com.scrapstosavory.app.util.DateUtils;
 import com.scrapstosavory.app.util.QuantityUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +44,15 @@ import java.util.Map;
  * List screen, or in "edit" mode when a row's edit button is tapped,
  * which passes the item's id in through EXTRA_ITEM_ID.
  *
- * The ingredient name is picked from a preset list instead of typed in,
- * grouped under headings like Vegetables or Dairy and eggs, so there is
- * nothing to spell correctly or misname. Picking a name also sets a
- * sensible starting unit for it (tomatoes default to pieces, rice
- * defaults to kilograms, and so on), instead of leaving the unit stuck
- * on grams for everything. The quantity is still checked before saving.
+ * The ingredient name is picked from one expandable section per food
+ * type (Meat and poultry, Vegetables, and so on) instead of typed in,
+ * so there is nothing to spell correctly or misname. Picking a name
+ * also picks its category, since each section already is a category,
+ * and sets a sensible starting unit for it (tomatoes default to
+ * pieces, rice defaults to kilograms), instead of leaving the unit
+ * stuck on grams for everything. Quantity stays a plain count of how
+ * many were bought; an exact weight in grams is a separate, optional
+ * field for anyone who wants that extra detail.
  */
 public class AddEditIngredientActivity extends AppCompatActivity {
 
@@ -56,23 +64,31 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private String dateAddedForSave;
     private String selectedExpiryDate; // null until the user picks one
 
+    private LinearLayout containerIngredientGroups;
+    private TextView textSelectedIngredient;
     private TextInputLayout layoutQuantity;
     private TextInputEditText editIngredientQuantity;
-    private Spinner spinnerIngredientName;
+    private TextInputLayout layoutWeightGrams;
+    private TextInputEditText editWeightGrams;
     private Spinner spinnerUnit;
-    private Spinner spinnerCategory;
     private TextView textExpiryDate;
     private TextView buttonClearExpiry;
 
-    // The default unit for each preset ingredient name, looked up when the
-    // user picks a name so the unit field can jump to something sensible.
+    // What the user has picked from the expandable ingredient sections.
+    private String selectedIngredientName;
+    private PantryCategory selectedCategory;
+
+    // The row view currently shown as picked, so it can be un-bolded if the user picks a different one.
+    private TextView selectedItemView;
+
+    // The default unit for each preset ingredient name, filled in while the sections are built.
     private final Map<String, String> defaultUnitByName = new HashMap<>();
 
-    // While the ingredient name spinner is still being set up (including
-    // for an existing item being edited), picking its starting selection
-    // should not also overwrite the unit the item was actually saved
-    // with. This stays true until that initial setup is finished.
-    private boolean suppressAutoUnitUpdate = true;
+    // Lets selectIngredient() find and re-style a row by name, and setUpIngredientGroups()
+    // find and expand the right section when editing an existing item.
+    private final Map<String, TextView> itemRowViews = new HashMap<>();
+    private final Map<PantryCategory, LinearLayout> groupItemsContainers = new HashMap<>();
+    private final Map<PantryCategory, TextView> groupArrowViews = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,105 +104,198 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         bindViews();
-        setUpSpinners();
+        setUpUnitSpinner();
         setUpExpiryDatePicker();
 
         if (isEditMode) {
             populateFieldsForEdit();
         } else {
             dateAddedForSave = DateUtils.todayIso();
-            setUpIngredientNameSpinner(null);
-            suppressAutoUnitUpdate = false;
+            setUpIngredientGroups(null, null);
         }
 
         findViewById(R.id.buttonSaveIngredient).setOnClickListener(v -> onSaveClicked(isEditMode));
     }
 
     private void bindViews() {
+        containerIngredientGroups = findViewById(R.id.containerIngredientGroups);
+        textSelectedIngredient = findViewById(R.id.textSelectedIngredient);
         layoutQuantity = findViewById(R.id.layoutQuantity);
         editIngredientQuantity = findViewById(R.id.editIngredientQuantity);
-        spinnerIngredientName = findViewById(R.id.spinnerIngredientName);
+        layoutWeightGrams = findViewById(R.id.layoutWeightGrams);
+        editWeightGrams = findViewById(R.id.editWeightGrams);
         spinnerUnit = findViewById(R.id.spinnerUnit);
-        spinnerCategory = findViewById(R.id.spinnerCategory);
         textExpiryDate = findViewById(R.id.textExpiryDate);
         buttonClearExpiry = findViewById(R.id.buttonClearExpiry);
     }
 
-    private void setUpSpinners() {
-        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item, Constants.UNITS);
+    private void setUpUnitSpinner() {
+        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, Constants.UNITS);
+        unitAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinnerUnit.setAdapter(unitAdapter);
-
-        String[] categoryDisplayNames = new String[PantryCategory.values().length];
-        PantryCategory[] categories = PantryCategory.values();
-        for (int i = 0; i < categories.length; i++) {
-            categoryDisplayNames[i] = categories[i].getDisplayName();
-        }
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item, categoryDisplayNames);
-        spinnerCategory.setAdapter(categoryAdapter);
-
-        spinnerIngredientName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (suppressAutoUnitUpdate) {
-                    return;
-                }
-                String name = (String) spinnerIngredientName.getSelectedItem();
-                String defaultUnit = defaultUnitByName.get(name);
-                if (defaultUnit != null) {
-                    selectSpinnerValue(spinnerUnit, defaultUnit);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // nothing to do, the spinner always has something selected once it has an adapter
-            }
-        });
     }
 
     /**
-     * Builds the grouped list of preset ingredient names (with a heading
-     * above each group) and selects one to start with. Passing null
-     * means this is a new item, so the first real name in the list is
-     * selected. Passing an existing name tries to find that exact name
-     * in the preset list; if it is not there (the item was added before
-     * this list existed, or was free typed with a name that does not
-     * match a preset), that name is kept by adding it as its own entry
-     * at the very top, rather than quietly swapping it for a different
-     * name the next time this item is saved.
+     * Builds one expandable section per food type, each listing its
+     * preset ingredient names. Passing null for existingName is a new
+     * item, nothing is selected to start with. Passing an existing name
+     * and category tries to find that exact name among the presets; if
+     * it is not there (the item was added before this list existed, or
+     * was free typed with a name that does not match a preset), that
+     * name is kept by adding it as its own row under its saved category,
+     * rather than quietly swapping it for a different name the next
+     * time this item is saved.
      */
-    private void setUpIngredientNameSpinner(@Nullable String existingName) {
-        List<String> items = new ArrayList<>();
-        List<Integer> headerPositions = new ArrayList<>();
+    private void setUpIngredientGroups(@Nullable String existingName, @Nullable PantryCategory existingCategory) {
+        containerIngredientGroups.removeAllViews();
+        itemRowViews.clear();
+        groupItemsContainers.clear();
+        groupArrowViews.clear();
+        defaultUnitByName.clear();
+        selectedItemView = null;
 
-        for (Map.Entry<String, IngredientNameCatalog.Entry[]> group : IngredientNameCatalog.GROUPS.entrySet()) {
-            headerPositions.add(items.size());
-            items.add(group.getKey());
-            for (IngredientNameCatalog.Entry entry : group.getValue()) {
-                items.add(entry.name);
-                defaultUnitByName.put(entry.name, entry.defaultUnit);
-            }
-        }
-
-        int selectedPosition = 1; // the first real name, right after the first heading
-
-        if (!TextUtils.isEmpty(existingName)) {
-            int matchPosition = items.indexOf(existingName);
-            if (matchPosition != -1) {
-                selectedPosition = matchPosition;
-            } else {
-                items.add(0, existingName);
-                for (int i = 0; i < headerPositions.size(); i++) {
-                    headerPositions.set(i, headerPositions.get(i) + 1);
+        boolean existingIsPreset = false;
+        if (existingName != null) {
+            for (IngredientNameCatalog.Entry[] entries : IngredientNameCatalog.GROUPS.values()) {
+                for (IngredientNameCatalog.Entry entry : entries) {
+                    if (entry.name.equals(existingName)) {
+                        existingIsPreset = true;
+                    }
                 }
-                selectedPosition = 0;
             }
         }
 
-        spinnerIngredientName.setAdapter(new GroupedSpinnerAdapter(this, items, headerPositions));
-        spinnerIngredientName.setSelection(selectedPosition);
+        PantryCategory legacyRowCategory = (existingName != null && !existingIsPreset)
+                ? (existingCategory != null ? existingCategory : PantryCategory.OTHER)
+                : null;
+
+        PantryCategory categoryToExpand = null;
+
+        for (Map.Entry<PantryCategory, IngredientNameCatalog.Entry[]> group : IngredientNameCatalog.GROUPS.entrySet()) {
+            PantryCategory category = group.getKey();
+            List<IngredientNameCatalog.Entry> entries = new ArrayList<>(Arrays.asList(group.getValue()));
+
+            if (category == legacyRowCategory) {
+                entries.add(0, new IngredientNameCatalog.Entry(existingName, null));
+            }
+
+            for (IngredientNameCatalog.Entry entry : entries) {
+                if (entry.defaultUnit != null) {
+                    defaultUnitByName.put(entry.name, entry.defaultUnit);
+                }
+                if (entry.name.equals(existingName)) {
+                    categoryToExpand = category;
+                }
+            }
+
+            addGroupSection(category, entries);
+        }
+
+        if (existingName != null) {
+            selectIngredient(existingName, categoryToExpand != null ? categoryToExpand : PantryCategory.OTHER, false);
+            setGroupExpanded(categoryToExpand, true);
+        } else {
+            textSelectedIngredient.setText(R.string.ingredient_not_selected_yet);
+        }
+    }
+
+    /** Adds one tappable heading (a food type) plus its collapsed list of ingredient name rows. */
+    private void addGroupSection(PantryCategory category, List<IngredientNameCatalog.Entry> entries) {
+        LinearLayout headerRow = new LinearLayout(this);
+        headerRow.setOrientation(LinearLayout.HORIZONTAL);
+        headerRow.setGravity(Gravity.CENTER_VERTICAL);
+        headerRow.setPadding(dp(4), dp(12), dp(4), dp(12));
+        headerRow.setBackground(selectableBackground());
+        headerRow.setClickable(true);
+        headerRow.setFocusable(true);
+
+        TextView label = new TextView(this);
+        label.setText(category.getDisplayName());
+        label.setTextColor(ContextCompat.getColor(this, R.color.pantry_text_primary));
+        label.setTextSize(15);
+        label.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView arrow = new TextView(this);
+        arrow.setText(R.string.accordion_collapsed_arrow);
+        arrow.setTextColor(ContextCompat.getColor(this, R.color.pantry_text_secondary));
+        arrow.setTextSize(15);
+
+        headerRow.addView(label);
+        headerRow.addView(arrow);
+
+        LinearLayout itemsContainer = new LinearLayout(this);
+        itemsContainer.setOrientation(LinearLayout.VERTICAL);
+        itemsContainer.setVisibility(View.GONE);
+        itemsContainer.setPadding(dp(16), 0, dp(4), dp(4));
+
+        for (IngredientNameCatalog.Entry entry : entries) {
+            TextView itemRow = new TextView(this);
+            itemRow.setText(entry.name);
+            itemRow.setTextColor(ContextCompat.getColor(this, R.color.pantry_text_primary));
+            itemRow.setTextSize(14);
+            itemRow.setPadding(dp(8), dp(10), dp(8), dp(10));
+            itemRow.setBackground(selectableBackground());
+            itemRow.setClickable(true);
+            itemRow.setFocusable(true);
+            itemRow.setOnClickListener(v -> selectIngredient(entry.name, category, true));
+            itemsContainer.addView(itemRow);
+            itemRowViews.put(entry.name, itemRow);
+        }
+
+        headerRow.setOnClickListener(v -> toggleGroup(category));
+
+        containerIngredientGroups.addView(headerRow);
+        containerIngredientGroups.addView(itemsContainer);
+
+        groupItemsContainers.put(category, itemsContainer);
+        groupArrowViews.put(category, arrow);
+    }
+
+    private void toggleGroup(PantryCategory category) {
+        boolean isExpanded = groupItemsContainers.get(category).getVisibility() == View.VISIBLE;
+        setGroupExpanded(category, !isExpanded);
+    }
+
+    private void setGroupExpanded(@Nullable PantryCategory category, boolean expanded) {
+        if (category == null) {
+            return;
+        }
+        LinearLayout itemsContainer = groupItemsContainers.get(category);
+        TextView arrow = groupArrowViews.get(category);
+        if (itemsContainer == null || arrow == null) {
+            return;
+        }
+        itemsContainer.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        arrow.setText(expanded ? R.string.accordion_expanded_arrow : R.string.accordion_collapsed_arrow);
+    }
+
+    /**
+     * Records the chosen ingredient and category, updates the row
+     * styling so the current pick is clear, and (only when a person
+     * actually tapped a row, not while the screen is first loading an
+     * existing item) jumps the unit spinner to that ingredient's
+     * default unit.
+     */
+    private void selectIngredient(String name, PantryCategory category, boolean updateUnitAutomatically) {
+        selectedIngredientName = name;
+        selectedCategory = category;
+        textSelectedIngredient.setText(getString(R.string.ingredient_selected_format, name));
+
+        if (selectedItemView != null) {
+            selectedItemView.setTypeface(null, Typeface.NORMAL);
+        }
+        TextView newRowView = itemRowViews.get(name);
+        if (newRowView != null) {
+            newRowView.setTypeface(null, Typeface.BOLD);
+        }
+        selectedItemView = newRowView;
+
+        if (updateUnitAutomatically) {
+            String defaultUnit = defaultUnitByName.get(name);
+            if (defaultUnit != null) {
+                selectSpinnerValue(spinnerUnit, defaultUnit);
+            }
+        }
     }
 
     private void setUpExpiryDatePicker() {
@@ -220,11 +329,13 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
 
         dateAddedForSave = existing.getDateAdded();
-        setUpIngredientNameSpinner(existing.getName());
+        setUpIngredientGroups(existing.getName(), existing.getCategory());
         editIngredientQuantity.setText(QuantityUtils.format(existing.getQuantity()));
         selectSpinnerValue(spinnerUnit, existing.getUnit());
-        selectSpinnerValue(spinnerCategory, existing.getCategory().getDisplayName());
-        suppressAutoUnitUpdate = false;
+
+        if (existing.hasWeightInGrams()) {
+            editWeightGrams.setText(QuantityUtils.format(existing.getWeightInGrams()));
+        }
 
         if (existing.hasExpiryDate()) {
             selectedExpiryDate = existing.getExpiryDate();
@@ -234,11 +345,16 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     }
 
     private void onSaveClicked(boolean isEditMode) {
-        String name = (String) spinnerIngredientName.getSelectedItem();
+        if (selectedIngredientName == null) {
+            Toast.makeText(this, R.string.error_name_required, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String quantityText = editIngredientQuantity.getText() != null
                 ? editIngredientQuantity.getText().toString().trim() : "";
 
         layoutQuantity.setError(null);
+        layoutWeightGrams.setError(null);
 
         double quantity;
         if (TextUtils.isEmpty(quantityText)) {
@@ -256,12 +372,27 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        Double weightInGrams = null;
+        String weightText = editWeightGrams.getText() != null ? editWeightGrams.getText().toString().trim() : "";
+        if (!TextUtils.isEmpty(weightText)) {
+            try {
+                weightInGrams = Double.parseDouble(weightText);
+            } catch (NumberFormatException e) {
+                layoutWeightGrams.setError(getString(R.string.error_weight_grams_invalid));
+                return;
+            }
+            if (weightInGrams <= 0) {
+                layoutWeightGrams.setError(getString(R.string.error_weight_grams_invalid));
+                return;
+            }
+        }
+
         String unit = (String) spinnerUnit.getSelectedItem();
-        PantryCategory category = PantryCategory.values()[spinnerCategory.getSelectedItemPosition()];
 
         PantryItem item = new PantryItem(
                 isEditMode ? editingItemId : -1,
-                name, quantity, unit, selectedExpiryDate, dateAddedForSave, category);
+                selectedIngredientName, quantity, unit, selectedExpiryDate, dateAddedForSave, selectedCategory);
+        item.setWeightInGrams(weightInGrams);
 
         if (isEditMode) {
             pantryDao.update(item);
@@ -282,5 +413,15 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private Drawable selectableBackground() {
+        TypedValue outValue = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+        return ContextCompat.getDrawable(this, outValue.resourceId);
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density);
     }
 }

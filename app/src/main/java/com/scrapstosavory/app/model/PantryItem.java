@@ -15,6 +15,7 @@ public class PantryItem {
     private String expiryDate;  // stored as yyyy-MM-dd, can be left empty if there is no expiry date
     private String dateAdded;   // stored as yyyy-MM-dd, the day this item was added to the pantry
     private PantryCategory category = PantryCategory.OTHER; // used to guess a shelf life if no expiry date is given
+    private Double weightInGrams; // optional extra detail, null when the user did not give one
 
     public PantryItem() {
     }
@@ -94,6 +95,25 @@ public class PantryItem {
 
     public void setCategory(PantryCategory category) {
         this.category = category != null ? category : PantryCategory.OTHER;
+    }
+
+    /**
+     * An optional extra weight for this item in grams, on top of the
+     * quantity and unit. Quantity is meant to answer "how many" (2
+     * onions, 1 bag of rice), this answers "how heavy" when the user
+     * happens to know it and wants the extra detail. Null when they did
+     * not give one, since it is never required.
+     */
+    public Double getWeightInGrams() {
+        return weightInGrams;
+    }
+
+    public void setWeightInGrams(Double weightInGrams) {
+        this.weightInGrams = weightInGrams;
+    }
+
+    public boolean hasWeightInGrams() {
+        return weightInGrams != null;
     }
 
     /**

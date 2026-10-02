@@ -1,18 +1,22 @@
 package com.scrapstosavory.app.data;
 
+import com.scrapstosavory.app.model.PantryCategory;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * A fixed list of common South African home-cooking ingredients, grouped
- * under simple headings, with a sensible default unit for each one.
+ * by PantryCategory, with a sensible default unit for each one.
  *
- * This exists so the Add/Edit Ingredient screen can offer a dropdown of
- * names instead of free typing. Each name also carries a starting unit
- * that makes sense for it, since a tomato is naturally counted in
- * pieces while rice is naturally weighed in kilograms, rather than
- * leaving the unit stuck on grams no matter what was picked. The user
- * can still change the unit afterwards if theirs is different.
+ * This exists so the Add/Edit Ingredient screen can offer a pick list of
+ * names instead of free typing, with one expandable section per
+ * category. Picking a name also picks its category for you, since they
+ * are the same grouping. Each name also carries a starting unit that
+ * makes sense for it, since a tomato is naturally counted in pieces
+ * while rice is naturally weighed in kilograms, rather than leaving the
+ * unit stuck on grams no matter what was picked. The user can still
+ * change the unit afterwards if theirs is different.
  */
 public final class IngredientNameCatalog {
 
@@ -27,10 +31,10 @@ public final class IngredientNameCatalog {
         }
     }
 
-    public static final Map<String, Entry[]> GROUPS = new LinkedHashMap<>();
+    public static final Map<PantryCategory, Entry[]> GROUPS = new LinkedHashMap<>();
 
     static {
-        GROUPS.put("Meat and poultry", new Entry[]{
+        GROUPS.put(PantryCategory.MEAT_AND_POULTRY, new Entry[]{
                 new Entry("Chicken breast", "g"),
                 new Entry("Chicken thighs", "g"),
                 new Entry("Beef mince", "g"),
@@ -40,7 +44,7 @@ public final class IngredientNameCatalog {
                 new Entry("Bacon", "g"),
         });
 
-        GROUPS.put("Vegetables", new Entry[]{
+        GROUPS.put(PantryCategory.VEGETABLES, new Entry[]{
                 new Entry("Onion", "pcs"),
                 new Entry("Tomato", "pcs"),
                 new Entry("Potato", "pcs"),
@@ -53,7 +57,7 @@ public final class IngredientNameCatalog {
                 new Entry("Pumpkin", "pcs"),
         });
 
-        GROUPS.put("Spices and seasonings", new Entry[]{
+        GROUPS.put(PantryCategory.SPICES_AND_SEASONINGS, new Entry[]{
                 new Entry("Salt", "g"),
                 new Entry("Black pepper", "g"),
                 new Entry("Paprika", "g"),
@@ -64,7 +68,7 @@ public final class IngredientNameCatalog {
                 new Entry("Garlic and herb seasoning", "g"),
         });
 
-        GROUPS.put("Dairy and eggs", new Entry[]{
+        GROUPS.put(PantryCategory.DAIRY_AND_EGGS, new Entry[]{
                 new Entry("Milk", "ml"),
                 new Entry("Eggs", "pcs"),
                 new Entry("Cheese", "g"),
@@ -73,7 +77,7 @@ public final class IngredientNameCatalog {
                 new Entry("Margarine", "g"),
         });
 
-        GROUPS.put("Grains and starches", new Entry[]{
+        GROUPS.put(PantryCategory.GRAINS_AND_STARCHES, new Entry[]{
                 new Entry("Rice", "kg"),
                 new Entry("Pap (maize meal)", "kg"),
                 new Entry("Samp", "kg"),
@@ -83,12 +87,13 @@ public final class IngredientNameCatalog {
                 new Entry("Flour", "kg"),
         });
 
-        GROUPS.put("Other", new Entry[]{
+        GROUPS.put(PantryCategory.OTHER, new Entry[]{
                 new Entry("Cooking oil", "ml"),
                 new Entry("Canned beans", "pcs"),
                 new Entry("Canned tomatoes", "pcs"),
                 new Entry("Peanut butter", "g"),
                 new Entry("Sugar", "kg"),
+                new Entry("Leftovers (meal prep)", "pcs"),
         });
     }
 

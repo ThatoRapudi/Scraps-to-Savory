@@ -66,8 +66,14 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         PantryItem item = items.get(position);
 
         holder.textItemName.setText(item.getName());
-        holder.textItemQuantity.setText(String.format("%s %s • %s",
-                QuantityUtils.format(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));
+        if (item.hasWeightInGrams()) {
+            holder.textItemQuantity.setText(String.format("%s %s (approx. %sg) • %s",
+                    QuantityUtils.format(item.getQuantity()), item.getUnit(),
+                    QuantityUtils.format(item.getWeightInGrams()), item.getCategory().getDisplayName()));
+        } else {
+            holder.textItemQuantity.setText(String.format("%s %s • %s",
+                    QuantityUtils.format(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));
+        }
 
         Context context = holder.textItemExpiry.getContext();
         String effectiveExpiryDate = item.getEffectiveExpiryDate();

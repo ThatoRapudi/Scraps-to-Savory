@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Scraps to Savory</string>
 
+    <!-- Welcome screen -->
+    <string name="welcome_description">Scraps to Savory helps you cook with what you already have. Add the ingredients sitting in your pantry, and get recipe ideas built around them, so less food goes to waste and you spend less on groceries.</string>
+    <string name="welcome_get_started">Get started</string>
+
     <!-- Pantry List screen -->
     <string name="pantry_list_title">My Pantry</string>
     <string name="empty_pantry_message">Your pantry is empty. Tap + to add your first ingredient.</string>
@@ -18,18 +22,24 @@
     <!-- Add/Edit Ingredient screen -->
     <string name="add_ingredient_title">Add Ingredient</string>
     <string name="edit_ingredient_title">Edit Ingredient</string>
-    <string name="ingredient_name_hint">Ingredient name</string>
+    <string name="ingredient_name_hint">Ingredient</string>
+    <string name="ingredient_not_selected_yet">No ingredient selected yet</string>
+    <string name="ingredient_selected_format">Selected: %1$s</string>
+    <string name="accordion_collapsed_arrow">▸</string>
+    <string name="accordion_expanded_arrow">▾</string>
     <string name="ingredient_quantity_hint">Quantity</string>
     <string name="ingredient_unit_hint">Unit</string>
-    <string name="ingredient_category_hint">Category</string>
+    <string name="ingredient_weight_grams_hint">Weight in grams (optional)</string>
+    <string name="ingredient_weight_grams_note">Only fill this in if you also want to note the exact weight.</string>
     <string name="ingredient_expiry_hint">Expiry date (optional)</string>
     <string name="ingredient_expiry_not_set">Tap to set an expiry date</string>
     <string name="expiry_optional_note">If you leave this blank, \"expiring soon\" alerts will estimate a shelf life from the category instead.</string>
     <string name="clear">Clear</string>
     <string name="save">Save</string>
-    <string name="error_name_required">Please enter an ingredient name</string>
+    <string name="error_name_required">Please choose an ingredient from the list</string>
     <string name="error_quantity_required">Please enter a quantity</string>
     <string name="error_quantity_invalid">Quantity must be a number greater than 0</string>
+    <string name="error_weight_grams_invalid">Weight in grams must be a number greater than 0</string>
     <string name="ingredient_saved">Saved to pantry</string>
 
     <!-- Navigation menu, shared by the main screens -->

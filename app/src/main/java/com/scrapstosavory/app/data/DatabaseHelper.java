@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "scraps_to_savory.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // --- pantry_items --------------------------------------------------
     public static final String TABLE_PANTRY_ITEMS = "pantry_items";
@@ -31,6 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_PANTRY_EXPIRY_DATE = "expiry_date";
     public static final String COL_PANTRY_DATE_ADDED = "date_added";
     public static final String COL_PANTRY_CATEGORY = "category";
+    public static final String COL_PANTRY_WEIGHT_GRAMS = "weight_grams"; // optional, null when not given
 
     // --- recipes ---------------------------------------------------------
     public static final String TABLE_RECIPES = "recipes";
@@ -61,7 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_PANTRY_UNIT + " TEXT NOT NULL, " +
                 COL_PANTRY_EXPIRY_DATE + " TEXT, " +
                 COL_PANTRY_DATE_ADDED + " TEXT, " +
-                COL_PANTRY_CATEGORY + " TEXT NOT NULL DEFAULT 'OTHER')");
+                COL_PANTRY_CATEGORY + " TEXT NOT NULL DEFAULT 'OTHER', " +
+                COL_PANTRY_WEIGHT_GRAMS + " REAL)");
 
         db.execSQL("CREATE TABLE " + TABLE_RECIPES + " (" +
                 COL_RECIPE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

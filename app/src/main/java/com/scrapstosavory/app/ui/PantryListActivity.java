@@ -23,9 +23,10 @@ import java.util.List;
 
 /**
  * This is the first screen the app opens on. It shows every ingredient
- * currently in the pantry, using a RecyclerView connected to PantryDao,
- * and opens AddEditIngredientActivity (using an Intent) when the user
- * wants to add or edit an item.
+ * currently in the pantry, using a RecyclerView connected to PantryDao.
+ * The + button opens AddIngredientsActivity to add new ingredients, and
+ * the edit icon on a row opens EditIngredientActivity to fine-tune one
+ * that is already in the pantry.
  *
  * The list is reloaded in onResume() instead of onCreate() so that
  * coming back from adding, editing, or deleting an ingredient always
@@ -58,7 +59,7 @@ public class PantryListActivity extends BaseNavigationActivity implements Pantry
 
         FloatingActionButton fabAddItem = findViewById(R.id.fabAddItem);
         fabAddItem.setOnClickListener(v -> {
-            Intent intent = new Intent(PantryListActivity.this, AddEditIngredientActivity.class);
+            Intent intent = new Intent(PantryListActivity.this, AddIngredientsActivity.class);
             startActivity(intent);
         });
     }
@@ -80,8 +81,8 @@ public class PantryListActivity extends BaseNavigationActivity implements Pantry
 
     @Override
     public void onEditClicked(PantryItem item) {
-        Intent intent = new Intent(this, AddEditIngredientActivity.class);
-        intent.putExtra(AddEditIngredientActivity.EXTRA_ITEM_ID, item.getId());
+        Intent intent = new Intent(this, EditIngredientActivity.class);
+        intent.putExtra(EditIngredientActivity.EXTRA_ITEM_ID, item.getId());
         startActivity(intent);
     }
 

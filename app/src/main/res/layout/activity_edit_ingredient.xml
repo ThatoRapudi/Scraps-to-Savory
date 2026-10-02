@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/pantry_background"
@@ -24,32 +25,27 @@
             android:padding="20dp">
 
             <TextView
+                android:id="@+id/textIngredientName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ingredient_name_hint"
-                android:textColor="@color/pantry_text_secondary"
-                android:textSize="12sp" />
-
-            <LinearLayout
-                android:id="@+id/containerIngredientGroups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="vertical" />
+                android:textColor="@color/pantry_text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="Chicken breast" />
 
             <TextView
-                android:id="@+id/textSelectedIngredient"
-                android:layout_width="match_parent"
+                android:id="@+id/textIngredientCategory"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/ingredient_not_selected_yet"
+                android:layout_marginTop="2dp"
                 android:textColor="@color/pantry_text_secondary"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                tools:text="Meat and poultry" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -87,25 +83,52 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutWeightGrams"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editWeightGrams"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutWeight"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/ingredient_weight_grams_hint"
-                    android:inputType="numberDecimal" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/ingredient_weight_hint"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ingredient_unit_hint"
+                        android:textColor="@color/pantry_text_secondary"
+                        android:textSize="12sp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerWeightUnit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/ingredient_weight_grams_note"
+                android:text="@string/ingredient_weight_note"
                 android:textColor="@color/pantry_text_secondary"
                 android:textSize="12sp" />
 

@@ -19,8 +19,16 @@
     <string name="expires_on_format">Expires %1$s</string>
     <string name="expires_estimated_format">Estimated expiry %1$s</string>
 
-    <!-- Add/Edit Ingredient screen -->
-    <string name="add_ingredient_title">Add Ingredient</string>
+    <!-- Add Ingredients screen -->
+    <string name="add_ingredients_title">Add Ingredients</string>
+    <string name="add_ingredients_staged_heading">To add</string>
+    <string name="add_ingredients_staged_empty">Tap the + next to an ingredient below to add it here.</string>
+    <string name="add_ingredients_save">Add to pantry</string>
+    <string name="add_ingredients_saved_format">Added %1$d ingredient(s) to your pantry</string>
+    <string name="add_ingredients_staged_row_format">%1$s × %2$d</string>
+    <string name="error_no_ingredients_staged">Tap + next to at least one ingredient first</string>
+
+    <!-- Edit Ingredient screen -->
     <string name="edit_ingredient_title">Edit Ingredient</string>
     <string name="ingredient_name_hint">Ingredient</string>
     <string name="ingredient_not_selected_yet">No ingredient selected yet</string>
@@ -29,8 +37,8 @@
     <string name="accordion_expanded_arrow">▾</string>
     <string name="ingredient_quantity_hint">Quantity</string>
     <string name="ingredient_unit_hint">Unit</string>
-    <string name="ingredient_weight_grams_hint">Weight in grams (optional)</string>
-    <string name="ingredient_weight_grams_note">Only fill this in if you also want to note the exact weight.</string>
+    <string name="ingredient_weight_hint">Weight (optional)</string>
+    <string name="ingredient_weight_note">Only fill this in if you also want to note an exact weight or volume.</string>
     <string name="ingredient_expiry_hint">Expiry date (optional)</string>
     <string name="ingredient_expiry_not_set">Tap to set an expiry date</string>
     <string name="expiry_optional_note">If you leave this blank, \"expiring soon\" alerts will estimate a shelf life from the category instead.</string>
@@ -39,7 +47,7 @@
     <string name="error_name_required">Please choose an ingredient from the list</string>
     <string name="error_quantity_required">Please enter a quantity</string>
     <string name="error_quantity_invalid">Quantity must be a number greater than 0</string>
-    <string name="error_weight_grams_invalid">Weight in grams must be a number greater than 0</string>
+    <string name="error_weight_invalid">Weight must be a number greater than 0</string>
     <string name="ingredient_saved">Saved to pantry</string>
 
     <!-- Navigation menu, shared by the main screens -->
@@ -61,6 +69,14 @@
     <string name="recipe_not_found">This recipe could not be found</string>
     <string name="recipe_ingredients_heading">Ingredients</string>
     <string name="recipe_method_heading">Method</string>
+    <string name="recipe_feedback_heading">Did you enjoy this recipe?</string>
+    <string name="thumbs_up_emoji">👍</string>
+    <string name="thumbs_down_emoji">👎</string>
+    <string name="thumbs_up_description">Thumbs up</string>
+    <string name="thumbs_down_description">Thumbs down</string>
+    <string name="recipe_feedback_note_hint">Add a note (optional)</string>
+    <string name="recipe_feedback_save">Save feedback</string>
+    <string name="recipe_feedback_saved">Feedback saved</string>
 
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>

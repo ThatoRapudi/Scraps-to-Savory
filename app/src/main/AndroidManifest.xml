@@ -23,7 +23,12 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.AddEditIngredientActivity"
+            android:name=".ui.AddIngredientsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.PantryListActivity" />
+
+        <activity
+            android:name=".ui.EditIngredientActivity"
             android:exported="false"
             android:parentActivityName=".ui.PantryListActivity" />
 

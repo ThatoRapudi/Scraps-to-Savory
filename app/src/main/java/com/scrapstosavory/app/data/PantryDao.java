@@ -98,10 +98,12 @@ public class PantryDao {
         values.put(DatabaseHelper.COL_PANTRY_EXPIRY_DATE, item.getExpiryDate());
         values.put(DatabaseHelper.COL_PANTRY_DATE_ADDED, item.getDateAdded());
         values.put(DatabaseHelper.COL_PANTRY_CATEGORY, item.getCategory().name());
-        if (item.hasWeightInGrams()) {
-            values.put(DatabaseHelper.COL_PANTRY_WEIGHT_GRAMS, item.getWeightInGrams());
+        if (item.hasWeight()) {
+            values.put(DatabaseHelper.COL_PANTRY_WEIGHT_VALUE, item.getWeightValue());
+            values.put(DatabaseHelper.COL_PANTRY_WEIGHT_UNIT, item.getWeightUnit());
         } else {
-            values.putNull(DatabaseHelper.COL_PANTRY_WEIGHT_GRAMS);
+            values.putNull(DatabaseHelper.COL_PANTRY_WEIGHT_VALUE);
+            values.putNull(DatabaseHelper.COL_PANTRY_WEIGHT_UNIT);
         }
         return values;
     }
@@ -118,9 +120,11 @@ public class PantryDao {
         PantryItem item = new PantryItem(id, name, quantity, unit, expiryDate, dateAdded,
                 PantryCategory.fromDbValue(categoryValue));
 
-        int weightColumnIndex = cursor.getColumnIndexOrThrow(DatabaseHelper.COL_PANTRY_WEIGHT_GRAMS);
-        if (!cursor.isNull(weightColumnIndex)) {
-            item.setWeightInGrams(cursor.getDouble(weightColumnIndex));
+        int weightValueIndex = cursor.getColumnIndexOrThrow(DatabaseHelper.COL_PANTRY_WEIGHT_VALUE);
+        int weightUnitIndex = cursor.getColumnIndexOrThrow(DatabaseHelper.COL_PANTRY_WEIGHT_UNIT);
+        if (!cursor.isNull(weightValueIndex)) {
+            item.setWeightValue(cursor.getDouble(weightValueIndex));
+            item.setWeightUnit(cursor.getString(weightUnitIndex));
         }
 
         return item;

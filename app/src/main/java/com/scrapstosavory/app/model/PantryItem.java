@@ -15,7 +15,8 @@ public class PantryItem {
     private String expiryDate;  // stored as yyyy-MM-dd, can be left empty if there is no expiry date
     private String dateAdded;   // stored as yyyy-MM-dd, the day this item was added to the pantry
     private PantryCategory category = PantryCategory.OTHER; // used to guess a shelf life if no expiry date is given
-    private Double weightInGrams; // optional extra detail, null when the user did not give one
+    private Double weightValue; // optional extra detail, null when the user did not give one
+    private String weightUnit;  // goes with weightValue, e.g. "g" or "ml", null when weightValue is null
 
     public PantryItem() {
     }
@@ -98,22 +99,32 @@ public class PantryItem {
     }
 
     /**
-     * An optional extra weight for this item in grams, on top of the
-     * quantity and unit. Quantity is meant to answer "how many" (2
-     * onions, 1 bag of rice), this answers "how heavy" when the user
-     * happens to know it and wants the extra detail. Null when they did
-     * not give one, since it is never required.
+     * An optional extra, more precise measurement for this item, on top
+     * of the quantity. Quantity is meant to answer "how many" (2
+     * onions, 1 bag of rice), this answers "how much exactly" when the
+     * user happens to know it and wants the extra detail (750 ml of
+     * oil, 150 g of chicken breast). Not used for recipe matching, it
+     * is purely informational. Null when they did not give one, since
+     * it is never required.
      */
-    public Double getWeightInGrams() {
-        return weightInGrams;
+    public Double getWeightValue() {
+        return weightValue;
     }
 
-    public void setWeightInGrams(Double weightInGrams) {
-        this.weightInGrams = weightInGrams;
+    public void setWeightValue(Double weightValue) {
+        this.weightValue = weightValue;
     }
 
-    public boolean hasWeightInGrams() {
-        return weightInGrams != null;
+    public String getWeightUnit() {
+        return weightUnit;
+    }
+
+    public void setWeightUnit(String weightUnit) {
+        this.weightUnit = weightUnit;
+    }
+
+    public boolean hasWeight() {
+        return weightValue != null;
     }
 
     /**

@@ -66,10 +66,10 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         PantryItem item = items.get(position);
 
         holder.textItemName.setText(item.getName());
-        if (item.hasWeightInGrams()) {
-            holder.textItemQuantity.setText(String.format("%s %s (approx. %sg) • %s",
+        if (item.hasWeight()) {
+            holder.textItemQuantity.setText(String.format("%s %s (%s %s) • %s",
                     QuantityUtils.format(item.getQuantity()), item.getUnit(),
-                    QuantityUtils.format(item.getWeightInGrams()), item.getCategory().getDisplayName()));
+                    QuantityUtils.format(item.getWeightValue()), item.getWeightUnit(), item.getCategory().getDisplayName()));
         } else {
             holder.textItemQuantity.setText(String.format("%s %s • %s",
                     QuantityUtils.format(item.getQuantity()), item.getUnit(), item.getCategory().getDisplayName()));

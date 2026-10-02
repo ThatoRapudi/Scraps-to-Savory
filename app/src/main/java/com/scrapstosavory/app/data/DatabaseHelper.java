@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "scraps_to_savory.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // --- pantry_items --------------------------------------------------
     public static final String TABLE_PANTRY_ITEMS = "pantry_items";
@@ -31,7 +31,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_PANTRY_EXPIRY_DATE = "expiry_date";
     public static final String COL_PANTRY_DATE_ADDED = "date_added";
     public static final String COL_PANTRY_CATEGORY = "category";
-    public static final String COL_PANTRY_WEIGHT_GRAMS = "weight_grams"; // optional, null when not given
+    public static final String COL_PANTRY_WEIGHT_VALUE = "weight_value"; // optional, null when not given
+    public static final String COL_PANTRY_WEIGHT_UNIT = "weight_unit";   // optional, null when not given
 
     // --- recipes ---------------------------------------------------------
     public static final String TABLE_RECIPES = "recipes";
@@ -40,6 +41,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_RECIPE_STEPS = "steps";
     public static final String COL_RECIPE_DIET_TAGS = "diet_tags";   // comma-separated DietTag names
     public static final String COL_RECIPE_MEAL_TYPES = "meal_types"; // comma-separated MealType names
+    public static final String COL_RECIPE_LIKED = "liked";           // 1 = thumbs up, 0 = thumbs down, null = not rated yet
+    public static final String COL_RECIPE_NOTE = "note";             // optional free text left by the user
 
     // --- recipe_ingredients -----------------------------------------------
     public static final String TABLE_RECIPE_INGREDIENTS = "recipe_ingredients";
@@ -63,14 +66,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_PANTRY_EXPIRY_DATE + " TEXT, " +
                 COL_PANTRY_DATE_ADDED + " TEXT, " +
                 COL_PANTRY_CATEGORY + " TEXT NOT NULL DEFAULT 'OTHER', " +
-                COL_PANTRY_WEIGHT_GRAMS + " REAL)");
+                COL_PANTRY_WEIGHT_VALUE + " REAL, " +
+                COL_PANTRY_WEIGHT_UNIT + " TEXT)");
 
         db.execSQL("CREATE TABLE " + TABLE_RECIPES + " (" +
                 COL_RECIPE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_RECIPE_NAME + " TEXT NOT NULL, " +
                 COL_RECIPE_STEPS + " TEXT NOT NULL, " +
                 COL_RECIPE_DIET_TAGS + " TEXT NOT NULL DEFAULT '', " +
-                COL_RECIPE_MEAL_TYPES + " TEXT NOT NULL DEFAULT '')");
+                COL_RECIPE_MEAL_TYPES + " TEXT NOT NULL DEFAULT '', " +
+                COL_RECIPE_LIKED + " INTEGER, " +
+                COL_RECIPE_NOTE + " TEXT)");
 
         db.execSQL("CREATE TABLE " + TABLE_RECIPE_INGREDIENTS + " (" +
                 COL_RI_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

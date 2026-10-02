@@ -25,7 +25,7 @@
     <string name="add_ingredients_staged_empty">Tap the + next to an ingredient below to add it here.</string>
     <string name="add_ingredients_save">Add to pantry</string>
     <string name="add_ingredients_saved_format">Added %1$d ingredient(s) to your pantry</string>
-    <string name="add_ingredients_staged_row_format">%1$s × %2$d</string>
+    <string name="add_ingredients_staged_row_format">%1$s (%2$s %3$s)</string>
     <string name="error_no_ingredients_staged">Tap + next to at least one ingredient first</string>
 
     <!-- Edit Ingredient screen -->

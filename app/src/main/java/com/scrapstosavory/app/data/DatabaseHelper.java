@@ -132,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "4. Cover and simmer 20 minutes until rice is cooked and liquid absorbed.",
                 new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
-                        {"chicken", 400.0, "g"},
+                        {"chicken breast", 400.0, "g"},
                         {"rice", 250.0, "g"},
                         {"onion", 1.0, "pcs"},
                         {"garlic", 2.0, "pcs"},
@@ -341,7 +341,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "3. Simmer a further 20 minutes until the vegetables and chicken are tender.",
                 new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
-                        {"chicken", 300.0, "g"},
+                        {"chicken breast", 300.0, "g"},
                         {"carrot", 2.0, "pcs"},
                         {"potato", 2.0, "pcs"},
                         {"onion", 1.0, "pcs"},
@@ -358,7 +358,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
                         {"rice", 250.0, "g"},
-                        {"chicken", 400.0, "g"},
+                        {"chicken breast", 400.0, "g"},
                         {"carrot", 2.0, "pcs"},
                         {"green beans", 150.0, "g"},
                         {"beetroot", 2.0, "pcs"},
@@ -422,7 +422,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
                         {"maize meal", 250.0, "g"},
-                        {"wors", 400.0, "g"},
+                        {"boerewors", 400.0, "g"},
                         {"tomato", 2.0, "pcs"},
                         {"onion", 1.0, "pcs"},
                         {"chili powder", 1.0, "tsp"},

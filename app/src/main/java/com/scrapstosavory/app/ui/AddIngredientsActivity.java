@@ -22,6 +22,7 @@ import com.scrapstosavory.app.data.PantryDao;
 import com.scrapstosavory.app.model.PantryCategory;
 import com.scrapstosavory.app.model.PantryItem;
 import com.scrapstosavory.app.util.DateUtils;
+import com.scrapstosavory.app.util.QuantityUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,10 +35,12 @@ import java.util.Map;
  * so you can review or remove it before saving everything at once.
  *
  * Unit, weight and expiry date are not collected here on purpose, to
- * keep this screen fast. A sensible default unit (from the same preset
- * list) is used quietly behind the scenes so recipe matching still
- * works straight away; the Pantry List edit button is where those
- * details get fine-tuned afterwards.
+ * keep this screen fast. Each tap adds a realistic single-purchase
+ * amount of that ingredient (the catalog's defaultQuantityPerTap), in
+ * its catalog unit, so the amount staged is already enough for recipe
+ * matching to work straight away without the user needing to edit
+ * anything first. The Pantry List edit button is still where an exact
+ * weight, a different unit, or an expiry date get fine-tuned afterwards.
  */
 public class AddIngredientsActivity extends AppCompatActivity {
 
@@ -47,8 +50,8 @@ public class AddIngredientsActivity extends AppCompatActivity {
     private LinearLayout containerStagedList;
     private TextView textStagedEmpty;
 
-    // How many of each ingredient are staged so far, in the order they were first tapped.
-    private final Map<String, Integer> stagedCounts = new LinkedHashMap<>();
+    // Running quantity staged so far for each ingredient, in its catalog unit, in the order first tapped.
+    private final Map<String, Double> stagedQuantities = new LinkedHashMap<>();
     private final Map<String, PantryCategory> categoryByName = new LinkedHashMap<>();
     private final Map<String, String> defaultUnitByName = new LinkedHashMap<>();
     private final Map<String, TextView> rowCountViews = new LinkedHashMap<>();
@@ -61,6 +64,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
         pantryDao = new PantryDao(new DatabaseHelper(this));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.add_ingredients_title);
         setSupportActionBar(toolbar);
 
         containerIngredientGroups = findViewById(R.id.containerIngredientGroups);
@@ -109,7 +113,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
             for (IngredientNameCatalog.Entry entry : group.getValue()) {
                 defaultUnitByName.put(entry.name, entry.defaultUnit);
                 categoryByName.put(entry.name, category);
-                itemsContainer.addView(buildIngredientRow(entry.name));
+                itemsContainer.addView(buildIngredientRow(entry));
             }
 
             headerRow.setOnClickListener(v -> {
@@ -123,8 +127,10 @@ public class AddIngredientsActivity extends AppCompatActivity {
         }
     }
 
-    /** One row: the ingredient name on the left, its staged count, then minus and plus controls. */
-    private LinearLayout buildIngredientRow(String name) {
+    /** One row: the ingredient name on the left, its staged amount, then minus and plus controls. */
+    private LinearLayout buildIngredientRow(IngredientNameCatalog.Entry entry) {
+        String name = entry.name;
+
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
@@ -143,10 +149,10 @@ public class AddIngredientsActivity extends AppCompatActivity {
         rowCountViews.put(name, countView);
 
         TextView minusButton = stepperButton("−");
-        minusButton.setOnClickListener(v -> changeStagedCount(name, -1));
+        minusButton.setOnClickListener(v -> changeStagedQuantity(name, -entry.defaultQuantityPerTap));
 
         TextView plusButton = stepperButton("+");
-        plusButton.setOnClickListener(v -> changeStagedCount(name, 1));
+        plusButton.setOnClickListener(v -> changeStagedQuantity(name, entry.defaultQuantityPerTap));
 
         row.addView(nameView);
         row.addView(countView);
@@ -167,35 +173,37 @@ public class AddIngredientsActivity extends AppCompatActivity {
         return button;
     }
 
-    private void changeStagedCount(String name, int delta) {
-        int newCount = Math.max(0, stagedCounts.getOrDefault(name, 0) + delta);
-        if (newCount == 0) {
-            stagedCounts.remove(name);
+    private void changeStagedQuantity(String name, double delta) {
+        double newQuantity = Math.max(0, stagedQuantities.getOrDefault(name, 0.0) + delta);
+        if (newQuantity <= 0) {
+            stagedQuantities.remove(name);
         } else {
-            stagedCounts.put(name, newCount);
+            stagedQuantities.put(name, newQuantity);
         }
 
         TextView countView = rowCountViews.get(name);
         if (countView != null) {
-            countView.setText(newCount > 0 ? String.valueOf(newCount) : "");
+            countView.setText(newQuantity > 0
+                    ? QuantityUtils.format(newQuantity) + " " + defaultUnitByName.get(name) : "");
         }
 
         refreshStagedList();
     }
 
-    /** Rebuilds the "To add" review list from stagedCounts, name on the left, controls on the right. */
+    /** Rebuilds the "To add" review list from stagedQuantities, name on the left, controls on the right. */
     private void refreshStagedList() {
         containerStagedList.removeAllViews();
 
-        if (stagedCounts.isEmpty()) {
+        if (stagedQuantities.isEmpty()) {
             textStagedEmpty.setVisibility(View.VISIBLE);
             return;
         }
         textStagedEmpty.setVisibility(View.GONE);
 
-        for (Map.Entry<String, Integer> staged : stagedCounts.entrySet()) {
+        for (Map.Entry<String, Double> staged : stagedQuantities.entrySet()) {
             String name = staged.getKey();
-            int count = staged.getValue();
+            String formattedQuantity = QuantityUtils.format(staged.getValue());
+            String unit = defaultUnitByName.get(name);
 
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
@@ -203,7 +211,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
             row.setPadding(dp(4), dp(8), dp(4), dp(8));
 
             TextView nameView = new TextView(this);
-            nameView.setText(getString(R.string.add_ingredients_staged_row_format, name, count));
+            nameView.setText(getString(R.string.add_ingredients_staged_row_format, name, formattedQuantity, unit));
             nameView.setTextColor(ContextCompat.getColor(this, R.color.pantry_text_primary));
             nameView.setTextSize(14);
             nameView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
@@ -211,7 +219,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
             TextView removeButton = stepperButton("✕");
             removeButton.setTextColor(ContextCompat.getColor(this, R.color.pantry_error));
             removeButton.setOnClickListener(v -> {
-                stagedCounts.remove(name);
+                stagedQuantities.remove(name);
                 TextView countView = rowCountViews.get(name);
                 if (countView != null) {
                     countView.setText("");
@@ -226,7 +234,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
     }
 
     private void onAddAllClicked() {
-        if (stagedCounts.isEmpty()) {
+        if (stagedQuantities.isEmpty()) {
             Toast.makeText(this, R.string.error_no_ingredients_staged, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -234,7 +242,7 @@ public class AddIngredientsActivity extends AppCompatActivity {
         String today = DateUtils.todayIso();
         int addedCount = 0;
 
-        for (Map.Entry<String, Integer> staged : stagedCounts.entrySet()) {
+        for (Map.Entry<String, Double> staged : stagedQuantities.entrySet()) {
             String name = staged.getKey();
             double quantity = staged.getValue();
             String unit = defaultUnitByName.get(name);

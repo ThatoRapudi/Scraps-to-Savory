@@ -10,13 +10,17 @@
         <!-- Every screen in the app needs to be listed here, or Android will not know it exists. -->
 
         <activity
-            android:name=".ui.PantryListActivity"
+            android:name=".ui.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.PantryListActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.AddEditIngredientActivity"

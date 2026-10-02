@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <path
+        android:fillColor="@color/pantry_primary"
+        android:pathData="M60,8 C86.5097,8 108,29.4903 108,56 C108,82.5097 86.5097,104 60,104 C33.4903,104 12,82.5097 12,56 C12,29.4903 33.4903,8 60,8 Z" />
+
+    <group
+        android:pivotX="60"
+        android:pivotY="56"
+        android:rotation="0">
+        <path
+            android:fillColor="@color/pantry_accent"
+            android:pathData="M60,56 C45,41 45,16 60,11 C75,16 75,41 60,56 Z" />
+    </group>
+
+    <group
+        android:pivotX="60"
+        android:pivotY="56"
+        android:rotation="120">
+        <path
+            android:fillColor="@color/pantry_accent"
+            android:pathData="M60,56 C45,41 45,16 60,11 C75,16 75,41 60,56 Z" />
+    </group>
+
+    <group
+        android:pivotX="60"
+        android:pivotY="56"
+        android:rotation="240">
+        <path
+            android:fillColor="@color/pantry_accent"
+            android:pathData="M60,56 C45,41 45,16 60,11 C75,16 75,41 60,56 Z" />
+    </group>
+
+    <path
+        android:fillColor="@color/pantry_background"
+        android:pathData="M60,44 C66.6274,44 72,49.3726 72,56 C72,62.6274 66.6274,68 60,68 C53.3726,68 48,62.6274 48,56 C48,49.3726 53.3726,44 60,44 Z" />
+
+</vector>

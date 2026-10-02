@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "scraps_to_savory.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     // --- pantry_items --------------------------------------------------
     public static final String TABLE_PANTRY_ITEMS = "pantry_items";
@@ -111,17 +111,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertRecipe(db, "Pap with Tomato & Onion Relish",
                 "1. Bring 750ml water to the boil and stir in the maize meal.\n" +
                         "2. Reduce heat and simmer 20 minutes, stirring occasionally, until firm.\n" +
-                        "3. Heat oil and fry the onion and garlic until soft.\n" +
-                        "4. Add chopped tomato and chili powder, simmer 10 minutes to make the relish.\n" +
-                        "5. Season with salt and serve the pap topped with relish.",
+                        "3. Simmer the chopped tomato and onion with the stock cube in a little water until soft, to make the relish.\n" +
+                        "4. Season with salt and serve the pap topped with the relish.",
                 new String[]{"VEGAN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
                         {"maize meal", 250.0, "g"},
                         {"tomato", 3.0, "pcs"},
                         {"onion", 1.0, "pcs"},
-                        {"garlic", 2.0, "pcs"},
-                        {"chili powder", 1.0, "tsp"},
-                        {"cooking oil", 30.0, "ml"},
+                        {"stock cube", 1.0, "pcs"},
                         {"salt", 1.0, "tsp"}
                 });
 
@@ -272,16 +269,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 });
 
         insertRecipe(db, "Butternut Soup",
-                "1. Fry onion and garlic in oil until soft.\n" +
-                        "2. Add chopped butternut, stock cube and 600ml water.\n" +
-                        "3. Simmer until the butternut is soft, then mash or blend until smooth.",
+                "1. Simmer the chopped butternut and onion with the stock cube in 600ml water.\n" +
+                        "2. Cook until the butternut is soft, then mash or blend until smooth.\n" +
+                        "3. Season with salt to taste.",
                 new String[]{"VEGAN"}, new String[]{"LUNCH", "DINNER"},
                 new Object[][]{
                         {"butternut", 500.0, "g"},
                         {"onion", 1.0, "pcs"},
-                        {"garlic", 2.0, "pcs"},
                         {"stock cube", 1.0, "pcs"},
-                        {"cooking oil", 30.0, "ml"}
+                        {"salt", 1.0, "tsp"}
                 });
 
         insertRecipe(db, "Cabbage & Mince Stew",
@@ -298,14 +294,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         {"cooking oil", 30.0, "ml"}
                 });
 
-        insertRecipe(db, "Spinach & Cheese Omelette",
+        insertRecipe(db, "Spinach, Tomato & Cheese Omelette",
                 "1. Wilt the spinach in a hot pan with a little oil, then set aside.\n" +
                         "2. Whisk the eggs and pour into the pan.\n" +
-                        "3. Add the spinach and cheese, fold the omelette and cook through.",
+                        "3. Add the spinach, chopped tomato and cheese, fold the omelette and cook through.",
                 new String[]{"VEGETARIAN", "HIGH_PROTEIN"}, new String[]{"BREAKFAST"},
                 new Object[][]{
                         {"egg", 3.0, "pcs"},
                         {"spinach", 100.0, "g"},
+                        {"tomato", 1.0, "pcs"},
                         {"cheese", 50.0, "g"},
                         {"cooking oil", 15.0, "ml"}
                 });
@@ -469,6 +466,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         {"sugar", 1.0, "tsp"},
                         {"baking powder", 1.0, "tsp"},
                         {"butter", 1.0, "tbsp"}
+                });
+
+        insertRecipe(db, "Tomato Soup",
+                "1. Fry the onion and garlic in oil until soft.\n" +
+                        "2. Add chopped tomato, the stock cube and 400ml water.\n" +
+                        "3. Simmer 15 minutes, then mash or blend until smooth.",
+                new String[]{"VEGAN"}, new String[]{"LUNCH", "DINNER"},
+                new Object[][]{
+                        {"tomato", 4.0, "pcs"},
+                        {"onion", 1.0, "pcs"},
+                        {"garlic", 2.0, "pcs"},
+                        {"stock cube", 1.0, "pcs"},
+                        {"cooking oil", 30.0, "ml"}
+                });
+
+        insertRecipe(db, "Pasta with Mince",
+                "1. Boil the pasta according to packet instructions.\n" +
+                        "2. Brown the mince with chopped onion and garlic in oil.\n" +
+                        "3. Add chopped tomato and simmer 10 minutes to make a sauce.\n" +
+                        "4. Mix the sauce through the drained pasta.",
+                new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
+                new Object[][]{
+                        {"pasta", 250.0, "g"},
+                        {"beef mince", 400.0, "g"},
+                        {"onion", 1.0, "pcs"},
+                        {"tomato", 2.0, "pcs"},
+                        {"garlic", 2.0, "pcs"},
+                        {"cooking oil", 30.0, "ml"}
+                });
+
+        insertRecipe(db, "Samp with Beef Stew, Spinach & Pumpkin",
+                "1. Boil the samp until soft.\n" +
+                        "2. Brown the stewing beef, then simmer until tender to make a stew.\n" +
+                        "3. Boil the pumpkin until soft and mash lightly.\n" +
+                        "4. Wilt the spinach in a hot pan.\n" +
+                        "5. Boil and slice the beetroot for a beetroot salad.\n" +
+                        "6. Plate the samp, beef stew, pumpkin, spinach and beetroot together.",
+                new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
+                new Object[][]{
+                        {"samp", 250.0, "g"},
+                        {"stewing beef", 400.0, "g"},
+                        {"spinach", 150.0, "g"},
+                        {"pumpkin", 500.0, "g"},
+                        {"beetroot", 2.0, "pcs"}
+                });
+
+        insertRecipe(db, "Pasta Salad",
+                "1. Boil the pasta according to packet instructions, then rinse under cold water.\n" +
+                        "2. Fry the onion in oil until soft, then let it cool.\n" +
+                        "3. Mix the pasta with chopped tomato, the cooled onion and grated cheese.",
+                new String[]{"VEGETARIAN"}, new String[]{"LUNCH"},
+                new Object[][]{
+                        {"pasta", 250.0, "g"},
+                        {"tomato", 2.0, "pcs"},
+                        {"onion", 1.0, "pcs"},
+                        {"cheese", 50.0, "g"},
+                        {"cooking oil", 30.0, "ml"}
+                });
+
+        insertRecipe(db, "Chicken, Garlic & Herb Pasta",
+                "1. Boil the pasta according to packet instructions.\n" +
+                        "2. Fry the chicken breast with chopped garlic and onion in oil until cooked through.\n" +
+                        "3. Season with the garlic and herb seasoning, mixed herbs, paprika and salt.\n" +
+                        "4. Toss the drained pasta through the chicken.",
+                new String[]{"HIGH_PROTEIN"}, new String[]{"LUNCH", "DINNER"},
+                new Object[][]{
+                        {"pasta", 250.0, "g"},
+                        {"chicken breast", 300.0, "g"},
+                        {"garlic", 3.0, "pcs"},
+                        {"onion", 1.0, "pcs"},
+                        {"garlic and herb seasoning", 10.0, "g"},
+                        {"mixed herbs", 5.0, "g"},
+                        {"paprika", 5.0, "g"},
+                        {"salt", 1.0, "tsp"},
+                        {"cooking oil", 30.0, "ml"}
                 });
     }
 

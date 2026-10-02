@@ -68,7 +68,7 @@ public final class IngredientNameCatalog {
                 new Entry("Spinach", "g", 150),
                 new Entry("Green pepper", "pcs", 1),
                 new Entry("Garlic", "pcs", 1),
-                new Entry("Pumpkin", "pcs", 1),
+                new Entry("Pumpkin", "g", 500),
                 new Entry("Beetroot", "pcs", 1),
                 new Entry("Green beans", "g", 150),
         });

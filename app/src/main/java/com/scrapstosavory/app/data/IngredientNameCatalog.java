@@ -23,11 +23,12 @@ import java.util.Map;
  * unit family both agree.
  *
  * defaultQuantityPerTap is how much tapping + once adds, in defaultUnit.
- * For things naturally counted (an onion, an egg) that is just 1. For
- * things naturally weighed or measured (mince, milk, oil) it is set to
- * a realistic single-purchase amount, so a couple of taps already adds
- * up to a usable amount instead of the user having to tap hundreds of
- * times to reach, say, 500 grams.
+ * It is set to the largest amount any single seeded recipe needs of that
+ * ingredient (rounded up to a realistic single-purchase amount), so
+ * tapping an ingredient once while doing a normal grocery-style pantry
+ * add is already enough on its own to make every recipe using it count
+ * as makeable, rather than leaving the user to guess how many tomatoes
+ * or cloves of garlic a recipe they haven't looked at yet will need.
  */
 public final class IngredientNameCatalog {
 
@@ -60,16 +61,16 @@ public final class IngredientNameCatalog {
 
         GROUPS.put(PantryCategory.VEGETABLES, new Entry[]{
                 new Entry("Onion", "pcs", 1),
-                new Entry("Tomato", "pcs", 1),
-                new Entry("Potato", "pcs", 1),
+                new Entry("Tomato", "pcs", 4),
+                new Entry("Potato", "pcs", 4),
                 new Entry("Butternut", "g", 500),
-                new Entry("Carrot", "pcs", 1),
+                new Entry("Carrot", "pcs", 2),
                 new Entry("Cabbage", "g", 300),
                 new Entry("Spinach", "g", 150),
                 new Entry("Green pepper", "pcs", 1),
-                new Entry("Garlic", "pcs", 1),
+                new Entry("Garlic", "pcs", 3),
                 new Entry("Pumpkin", "g", 500),
-                new Entry("Beetroot", "pcs", 1),
+                new Entry("Beetroot", "pcs", 2),
                 new Entry("Green beans", "g", 150),
         });
 
@@ -88,9 +89,9 @@ public final class IngredientNameCatalog {
 
         GROUPS.put(PantryCategory.DAIRY_AND_EGGS, new Entry[]{
                 new Entry("Milk", "ml", 500),
-                new Entry("Eggs", "pcs", 1),
+                new Entry("Eggs", "pcs", 3),
                 new Entry("Cheese", "g", 100),
-                new Entry("Butter", "tbsp", 1),
+                new Entry("Butter", "tbsp", 2),
                 new Entry("Plain yoghurt", "ml", 250),
                 new Entry("Margarine", "g", 100),
         });
@@ -99,13 +100,13 @@ public final class IngredientNameCatalog {
                 new Entry("Rice", "kg", 1),
                 new Entry("Maize meal", "g", 250),
                 new Entry("Samp", "kg", 1),
-                new Entry("Bread", "pcs", 1),
+                new Entry("Bread", "pcs", 2),
                 new Entry("Pasta", "g", 250),
                 new Entry("Oats", "g", 80),
                 new Entry("Flour", "kg", 1),
                 new Entry("Dombolo", "g", 250),
-                new Entry("Instant noodles", "pcs", 1),
-                new Entry("Weet-Bix", "pcs", 1),
+                new Entry("Instant noodles", "pcs", 2),
+                new Entry("Weet-Bix", "pcs", 3),
                 new Entry("Cereal", "g", 60),
         });
 
@@ -113,7 +114,7 @@ public final class IngredientNameCatalog {
                 new Entry("Cooking oil", "ml", 250),
                 new Entry("Baked beans", "g", 200),
                 new Entry("Canned tomatoes", "pcs", 1),
-                new Entry("Peanut butter", "tbsp", 1),
+                new Entry("Peanut butter", "tbsp", 2),
                 new Entry("Leftovers (meal prep)", "pcs", 1),
                 new Entry("Lentils", "g", 250),
                 new Entry("Chickpeas", "g", 250),

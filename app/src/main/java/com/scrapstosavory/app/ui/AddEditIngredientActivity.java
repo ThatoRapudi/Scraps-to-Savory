@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,7 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.scrapstosavory.app.R;
+import com.scrapstosavory.app.adapter.GroupedSpinnerAdapter;
 import com.scrapstosavory.app.data.DatabaseHelper;
+import com.scrapstosavory.app.data.IngredientNameCatalog;
 import com.scrapstosavory.app.data.PantryDao;
 import com.scrapstosavory.app.model.PantryCategory;
 import com.scrapstosavory.app.model.PantryItem;
@@ -24,7 +27,11 @@ import com.scrapstosavory.app.util.Constants;
 import com.scrapstosavory.app.util.DateUtils;
 import com.scrapstosavory.app.util.QuantityUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This screen is used for both adding a new pantry item and editing an
@@ -32,9 +39,12 @@ import java.util.Calendar;
  * List screen, or in "edit" mode when a row's edit button is tapped,
  * which passes the item's id in through EXTRA_ITEM_ID.
  *
- * The name and quantity are checked before anything is saved. Once
- * saving is done, the screen closes and the Pantry List screen reloads
- * itself with the latest data.
+ * The ingredient name is picked from a preset list instead of typed in,
+ * grouped under headings like Vegetables or Dairy and eggs, so there is
+ * nothing to spell correctly or misname. Picking a name also sets a
+ * sensible starting unit for it (tomatoes default to pieces, rice
+ * defaults to kilograms, and so on), instead of leaving the unit stuck
+ * on grams for everything. The quantity is still checked before saving.
  */
 public class AddEditIngredientActivity extends AppCompatActivity {
 
@@ -46,14 +56,23 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private String dateAddedForSave;
     private String selectedExpiryDate; // null until the user picks one
 
-    private TextInputLayout layoutName;
     private TextInputLayout layoutQuantity;
-    private TextInputEditText editIngredientName;
     private TextInputEditText editIngredientQuantity;
+    private Spinner spinnerIngredientName;
     private Spinner spinnerUnit;
     private Spinner spinnerCategory;
     private TextView textExpiryDate;
     private TextView buttonClearExpiry;
+
+    // The default unit for each preset ingredient name, looked up when the
+    // user picks a name so the unit field can jump to something sensible.
+    private final Map<String, String> defaultUnitByName = new HashMap<>();
+
+    // While the ingredient name spinner is still being set up (including
+    // for an existing item being edited), picking its starting selection
+    // should not also overwrite the unit the item was actually saved
+    // with. This stays true until that initial setup is finished.
+    private boolean suppressAutoUnitUpdate = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,16 +95,17 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             populateFieldsForEdit();
         } else {
             dateAddedForSave = DateUtils.todayIso();
+            setUpIngredientNameSpinner(null);
+            suppressAutoUnitUpdate = false;
         }
 
         findViewById(R.id.buttonSaveIngredient).setOnClickListener(v -> onSaveClicked(isEditMode));
     }
 
     private void bindViews() {
-        layoutName = findViewById(R.id.layoutName);
         layoutQuantity = findViewById(R.id.layoutQuantity);
-        editIngredientName = findViewById(R.id.editIngredientName);
         editIngredientQuantity = findViewById(R.id.editIngredientQuantity);
+        spinnerIngredientName = findViewById(R.id.spinnerIngredientName);
         spinnerUnit = findViewById(R.id.spinnerUnit);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         textExpiryDate = findViewById(R.id.textExpiryDate);
@@ -105,6 +125,68 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, categoryDisplayNames);
         spinnerCategory.setAdapter(categoryAdapter);
+
+        spinnerIngredientName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (suppressAutoUnitUpdate) {
+                    return;
+                }
+                String name = (String) spinnerIngredientName.getSelectedItem();
+                String defaultUnit = defaultUnitByName.get(name);
+                if (defaultUnit != null) {
+                    selectSpinnerValue(spinnerUnit, defaultUnit);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // nothing to do, the spinner always has something selected once it has an adapter
+            }
+        });
+    }
+
+    /**
+     * Builds the grouped list of preset ingredient names (with a heading
+     * above each group) and selects one to start with. Passing null
+     * means this is a new item, so the first real name in the list is
+     * selected. Passing an existing name tries to find that exact name
+     * in the preset list; if it is not there (the item was added before
+     * this list existed, or was free typed with a name that does not
+     * match a preset), that name is kept by adding it as its own entry
+     * at the very top, rather than quietly swapping it for a different
+     * name the next time this item is saved.
+     */
+    private void setUpIngredientNameSpinner(@Nullable String existingName) {
+        List<String> items = new ArrayList<>();
+        List<Integer> headerPositions = new ArrayList<>();
+
+        for (Map.Entry<String, IngredientNameCatalog.Entry[]> group : IngredientNameCatalog.GROUPS.entrySet()) {
+            headerPositions.add(items.size());
+            items.add(group.getKey());
+            for (IngredientNameCatalog.Entry entry : group.getValue()) {
+                items.add(entry.name);
+                defaultUnitByName.put(entry.name, entry.defaultUnit);
+            }
+        }
+
+        int selectedPosition = 1; // the first real name, right after the first heading
+
+        if (!TextUtils.isEmpty(existingName)) {
+            int matchPosition = items.indexOf(existingName);
+            if (matchPosition != -1) {
+                selectedPosition = matchPosition;
+            } else {
+                items.add(0, existingName);
+                for (int i = 0; i < headerPositions.size(); i++) {
+                    headerPositions.set(i, headerPositions.get(i) + 1);
+                }
+                selectedPosition = 0;
+            }
+        }
+
+        spinnerIngredientName.setAdapter(new GroupedSpinnerAdapter(this, items, headerPositions));
+        spinnerIngredientName.setSelection(selectedPosition);
     }
 
     private void setUpExpiryDatePicker() {
@@ -138,10 +220,11 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
 
         dateAddedForSave = existing.getDateAdded();
-        editIngredientName.setText(existing.getName());
+        setUpIngredientNameSpinner(existing.getName());
         editIngredientQuantity.setText(QuantityUtils.format(existing.getQuantity()));
         selectSpinnerValue(spinnerUnit, existing.getUnit());
         selectSpinnerValue(spinnerCategory, existing.getCategory().getDisplayName());
+        suppressAutoUnitUpdate = false;
 
         if (existing.hasExpiryDate()) {
             selectedExpiryDate = existing.getExpiryDate();
@@ -151,18 +234,11 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     }
 
     private void onSaveClicked(boolean isEditMode) {
-        String name = editIngredientName.getText() != null
-                ? editIngredientName.getText().toString().trim() : "";
+        String name = (String) spinnerIngredientName.getSelectedItem();
         String quantityText = editIngredientQuantity.getText() != null
                 ? editIngredientQuantity.getText().toString().trim() : "";
 
-        layoutName.setError(null);
         layoutQuantity.setError(null);
-
-        if (TextUtils.isEmpty(name)) {
-            layoutName.setError(getString(R.string.error_name_required));
-            return;
-        }
 
         double quantity;
         if (TextUtils.isEmpty(quantityText)) {
@@ -197,7 +273,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         finish();
     }
 
-    /** Selects the spinner entry matching this text, leaving position 0 selected if nothing matches. */
+    /** Selects the spinner entry matching this text, leaving its current selection if nothing matches. */
     private void selectSpinnerValue(Spinner spinner, String value) {
         ArrayAdapter<?> adapter = (ArrayAdapter<?>) spinner.getAdapter();
         for (int i = 0; i < adapter.getCount(); i++) {

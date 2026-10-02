@@ -46,6 +46,7 @@ public class PantryListActivity extends BaseNavigationActivity implements Pantry
         setContentView(R.layout.activity_pantry_list);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.pantry_list_title);
         setSupportActionBar(toolbar);
         setUpNavigationDrawer(toolbar, R.id.action_pantry);
 

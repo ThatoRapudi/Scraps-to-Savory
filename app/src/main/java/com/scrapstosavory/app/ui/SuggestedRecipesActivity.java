@@ -57,6 +57,7 @@ public class SuggestedRecipesActivity extends BaseNavigationActivity
         setContentView(R.layout.activity_suggested_recipes);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.suggested_recipes_title);
         setSupportActionBar(toolbar);
         setUpNavigationDrawer(toolbar, R.id.action_suggested_recipes);
 

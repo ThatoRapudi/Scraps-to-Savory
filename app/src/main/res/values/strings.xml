@@ -19,6 +19,13 @@
     <string name="expires_on_format">Expires %1$s</string>
     <string name="expires_estimated_format">Estimated expiry %1$s</string>
     <string name="pantry_category_header_format">%1$s (%2$d)</string>
+    <string name="clear_pantry_action">Clear pantry</string>
+    <string name="clear_pantry_confirm_title">Clear pantry?</string>
+    <string name="clear_pantry_confirm_message">Remove all %1$d item(s) from your pantry? This cannot be undone.</string>
+    <string name="pantry_cleared">Pantry cleared</string>
+    <string name="clear_category_confirm_title">Clear category?</string>
+    <string name="clear_category_confirm_message">Remove all %1$d item(s) from %2$s? This cannot be undone.</string>
+    <string name="category_cleared">Category cleared</string>
 
     <!-- Add Ingredients screen -->
     <string name="add_ingredients_title">Add Ingredients</string>
@@ -70,6 +77,9 @@
     <string name="recipe_not_found">This recipe could not be found</string>
     <string name="recipe_ingredients_heading">Ingredients</string>
     <string name="recipe_method_heading">Method</string>
+    <string name="recipe_mark_as_made">I made this — update my pantry</string>
+    <string name="recipe_mark_as_made_success">Pantry updated — ingredients used</string>
+    <string name="recipe_mark_as_made_insufficient">You no longer have enough of every ingredient for this recipe</string>
     <string name="recipe_feedback_heading">Did you enjoy this recipe?</string>
     <string name="thumbs_up_emoji">👍</string>
     <string name="thumbs_down_emoji">👎</string>

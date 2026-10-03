@@ -103,6 +103,25 @@ public class PantryDao {
         return rows;
     }
 
+    /** Delete every item in one category at once. Returns how many rows were removed. */
+    public int deleteByCategory(PantryCategory category) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        int rows = db.delete(
+                DatabaseHelper.TABLE_PANTRY_ITEMS,
+                DatabaseHelper.COL_PANTRY_CATEGORY + " = ?",
+                new String[]{category.name()});
+        db.close();
+        return rows;
+    }
+
+    /** Delete every item in the pantry at once. Returns how many rows were removed. */
+    public int deleteAll() {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        int rows = db.delete(DatabaseHelper.TABLE_PANTRY_ITEMS, null, null);
+        db.close();
+        return rows;
+    }
+
     private ContentValues toContentValues(PantryItem item) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COL_PANTRY_NAME, item.getName());

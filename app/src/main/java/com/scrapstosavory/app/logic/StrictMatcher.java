@@ -19,7 +19,9 @@ import java.util.List;
  * Ingredient names are compared after a bit of simple clean-up (lower
  * case, trimmed, and a basic singular/plural check), so that small
  * differences like "tomato" vs "tomatoes" do not stop a match that
- * should otherwise work.
+ * should otherwise work. Quantity comparisons go through UnitConverter,
+ * which is also what the Recipe Detail screen uses to actually subtract
+ * ingredients from the pantry once a recipe has been made.
  */
 public final class StrictMatcher {
 
@@ -61,24 +63,31 @@ public final class StrictMatcher {
     private static int countMissingIngredients(Recipe recipe, List<PantryItem> pantry) {
         int missing = 0;
         for (RecipeIngredient needed : recipe.getIngredients()) {
-            if (!pantryCovers(needed, pantry)) {
+            if (findCoveringItem(needed, pantry) == null) {
                 missing++;
             }
         }
         return missing;
     }
 
-    /** True if some item in the pantry matches this ingredient's name and has enough of it. */
-    private static boolean pantryCovers(RecipeIngredient needed, List<PantryItem> pantry) {
+    /**
+     * Finds the single pantry item that, on its own, matches this
+     * ingredient's name and has enough of it to cover what the recipe
+     * needs, or null if nothing in the pantry qualifies. Used both to
+     * check whether a recipe can be made, and (by the Recipe Detail
+     * screen) to know exactly which pantry row to deduct from once it
+     * actually has been made.
+     */
+    public static PantryItem findCoveringItem(RecipeIngredient needed, List<PantryItem> pantry) {
         String neededName = normalizeName(needed.getName());
         for (PantryItem item : pantry) {
             boolean sameIngredient = normalizeName(item.getName()).equals(neededName);
             if (sameIngredient && quantityIsEnough(item.getQuantity(), item.getUnit(),
                     needed.getQuantity(), needed.getUnit())) {
-                return true;
+                return item;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -109,58 +118,14 @@ public final class StrictMatcher {
      * instead of guessing.
      */
     static boolean quantityIsEnough(double haveQty, String haveUnit, double neededQty, String neededUnit) {
-        if (!sameUnitFamily(haveUnit, neededUnit)) {
+        if (!UnitConverter.sameUnitFamily(haveUnit, neededUnit)) {
             return false;
         }
-        Double haveInBaseUnit = toBaseUnit(haveQty, haveUnit);
-        Double neededInBaseUnit = toBaseUnit(neededQty, neededUnit);
+        Double haveInBaseUnit = UnitConverter.toBaseUnit(haveQty, haveUnit);
+        Double neededInBaseUnit = UnitConverter.toBaseUnit(neededQty, neededUnit);
         if (haveInBaseUnit == null || neededInBaseUnit == null) {
             return false;
         }
         return haveInBaseUnit >= neededInBaseUnit;
-    }
-
-    /** True if these two units can be sensibly compared against each other. */
-    private static boolean sameUnitFamily(String unitA, String unitB) {
-        String familyA = unitFamily(unitA);
-        return familyA != null && familyA.equals(unitFamily(unitB));
-    }
-
-    /** Groups units that can be converted into each other. Everything else only matches itself. */
-    private static String unitFamily(String unit) {
-        if (unit == null) {
-            return null;
-        }
-        switch (unit.trim().toLowerCase()) {
-            case "g":
-            case "kg":
-                return "mass";
-            case "ml":
-            case "l":
-                return "volume";
-            default:
-                return unit.trim().toLowerCase();
-        }
-    }
-
-    /** Converts a quantity into a common base unit (grams or millilitres) so amounts can be compared fairly. */
-    private static Double toBaseUnit(double quantity, String unit) {
-        if (unit == null) {
-            return null;
-        }
-        switch (unit.trim().toLowerCase()) {
-            case "g":
-            case "ml":
-            case "pcs":
-            case "tsp":
-            case "tbsp":
-            case "cup":
-                return quantity;
-            case "kg":
-            case "l":
-                return quantity * 1000;
-            default:
-                return null;
-        }
     }
 }

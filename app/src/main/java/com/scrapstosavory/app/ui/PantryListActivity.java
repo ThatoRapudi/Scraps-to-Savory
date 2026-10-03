@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -81,6 +83,54 @@ public class PantryListActivity extends BaseNavigationActivity {
         refreshPantryList();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_pantry_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_clear_pantry) {
+            onClearPantryClicked();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /** Clears the whole pantry at once, reached from the toolbar's overflow menu. */
+    private void onClearPantryClicked() {
+        int totalCount = pantryDao.getAll().size();
+        if (totalCount == 0) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.clear_pantry_confirm_title)
+                .setMessage(getString(R.string.clear_pantry_confirm_message, totalCount))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    pantryDao.deleteAll();
+                    refreshPantryList();
+                    Toast.makeText(this, R.string.pantry_cleared, Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+    /** Clears every item in a single category at once, reached from that category's header. */
+    private void onClearCategoryClicked(PantryCategory category, int itemCount) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.clear_category_confirm_title)
+                .setMessage(getString(R.string.clear_category_confirm_message, itemCount, category.getDisplayName()))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    pantryDao.deleteByCategory(category);
+                    refreshPantryList();
+                    Toast.makeText(this, R.string.category_cleared, Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
     /** Groups the pantry by category and rebuilds the accordion from scratch. */
     private void refreshPantryList() {
         List<PantryItem> items = pantryDao.getAll();
@@ -136,12 +186,24 @@ public class PantryListActivity extends BaseNavigationActivity {
         label.setTypeface(label.getTypeface(), android.graphics.Typeface.BOLD);
         label.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
+        TextView clearCategoryButton = new TextView(this);
+        clearCategoryButton.setText(R.string.clear);
+        clearCategoryButton.setTextColor(ContextCompat.getColor(this, R.color.pantry_error));
+        clearCategoryButton.setTextSize(13);
+        clearCategoryButton.setPadding(dp(8), dp(4), dp(8), dp(4));
+        clearCategoryButton.setBackground(selectableBackground());
+        clearCategoryButton.setClickable(true);
+        clearCategoryButton.setFocusable(true);
+        clearCategoryButton.setOnClickListener(v -> onClearCategoryClicked(category, itemsInCategory.size()));
+
         TextView arrow = new TextView(this);
         arrow.setText(R.string.accordion_collapsed_arrow);
         arrow.setTextColor(ContextCompat.getColor(this, R.color.pantry_text_secondary));
         arrow.setTextSize(15);
+        arrow.setPadding(dp(8), 0, 0, 0);
 
         headerRow.addView(label);
+        headerRow.addView(clearCategoryButton);
         headerRow.addView(arrow);
 
         LinearLayout itemsContainer = new LinearLayout(this);
